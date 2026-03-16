@@ -1,27 +1,51 @@
-# OKX RugShield 🛡️ | Production Checklist
+# OKX RugShield 🛡️ | 上线检查清单
 
-Before running RugShield with real size, ensure the following steps are ticked:
+在用真实资金运行 RugShield 之前，请至少确认以下事项全部完成。
 
-## [ ] 1. OpenClaw Isolation
-Ensure RugShield is running in an isolated OpenClaw workspace. Do not mix your coding/writing agents with your financial Guardian. It risks context contamination and accidental execution.
+## [ ] 1. OpenClaw 隔离运行
+请确保 RugShield 运行在一个独立的 OpenClaw workspace 中。
+不要把日常写代码、写文档的智能体和负责真实资金防御的 Guardian 混在一起，否则容易造成上下文污染或误执行。
 
-## [ ] 2. Environment Variables Set
-```
+## [ ] 2. 环境变量已正确填写
+```env
 OKX_API_KEY=********
 OKX_API_SECRET=********
 OKX_API_PASSPHRASE=********
-AUTO_DEFENSE_MODE=false # START WITH FALSE
+AUTO_DEFENSE_MODE=false # 建议先从 false 开始
 ```
-Ensure you have pulled correctly from OKX Dashboard and these are populated in `.env`.
 
-## [ ] 3. Safe Mode Verified
-Always run `node cli/rugshield.js` against your environment. Ensure it logs:
-`SAFE-MODE active. The Guardian agent will wait for your explicit CONFIRM string in OpenClaw...`
-Do not enable Auto-Defense until you are explicitly comfortable with non-HITL operations.
+请确认这些值已经从 OKX 后台正确获取，并写入 `.env` 文件。
 
-## [ ] 4. Dependencies Installed
-Ensure you ran `node scripts/installer.js --core-only`. 
-You must see `okx-dex-swap` and `okx-wallet-portfolio` amongst the installed OKX OnchainOS skills.
+## [ ] 3. 已验证 Safe Mode
+请先运行：
 
-## [ ] 5. Test Transaction
-In Safe Mode, wait for a `WATCH` or `WARNING` signal. Observe if the Guardian Agent accurately pulls your `okx-wallet-portfolio` balances before attempting to route an `okx-onchain-gateway` transaction. Say "NO" instead of "CONFIRM" to cancel the simulation. If the simulation logic holds up, you are ready for Production.
+```bash
+node cli/rugshield.js
+```
+
+并确认日志中出现类似提示：
+
+```text
+SAFE-MODE active. The Guardian agent will wait for your explicit CONFIRM string in OpenClaw...
+```
+
+在你明确接受非人工介入执行之前，不要急着开启 Auto-Defense Mode。
+
+## [ ] 4. 依赖技能已安装
+请确认你已经执行：
+
+```bash
+node scripts/installer.js --core-only
+```
+
+并且已经安装到至少以下关键技能：
+- `okx-dex-swap`
+- `okx-wallet-portfolio`
+
+## [ ] 5. 已做一次测试交易 / 模拟退出
+在 Safe Mode 下，等待一次 `WATCH` 或 `WARNING` 级别风险触发。
+观察 Guardian 是否能够正确读取 `okx-wallet-portfolio` 持仓，并在尝试 `okx-onchain-gateway` 路由前完成模拟。
+
+如果你只想测试流程，可以在需要确认时输入 `NO`，而不是 `CONFIRM`，从而取消执行。
+
+如果这一整套链路都符合预期，再进入真实生产使用。 
