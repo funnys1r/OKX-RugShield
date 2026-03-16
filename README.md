@@ -29,7 +29,7 @@ OKX RugShield 由两个核心 Skill 组成：
 仓库中的 CLI 仅用于：
 - 本地预检
 - mock 演示
-- 比赛现场没有完整 OpenClaw 环境时的兜底展示
+- 没有完整 OpenClaw 环境时的兜底展示
 - 原型级链路验证
 
 ## 模型与 Agent 配置说明
