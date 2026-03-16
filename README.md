@@ -14,6 +14,8 @@ Quick links:
 
 - [Skill Layer](./SKILL.md)
 - [OpenClaw 安装即用](./docs/OPENCLAW_USAGE.md)
+- [Judging Info](./docs/JUDGING_INFO.md)
+- [Prompts and Scenarios](./docs/PROMPTS_AND_SCENARIOS.md)
 - [Architecture](./docs/ARCHITECTURE.md)
 - [Guardian Pipeline](./docs/GUARDIAN_PIPELINE.md)
 - [Live Proof](./docs/LIVE_PROOF.md)
@@ -41,6 +43,30 @@ flowchart LR
   F --> G[Staged Defense Plan]
   G --> H[Simulation / Conditional Action]
 ```
+
+## 评审速览（Scoring Alignment）
+
+### Integration（结合度）
+- Built on official `okx/onchainos-skills` as the primitive capability layer
+- Uses OpenClaw as the natural-language dual-skill runtime
+- Live behavior becomes meaningfully stronger when official OKX skills are installed
+
+### Utility（实用性）
+- Targets a real user pain: hidden exposure to risky onchain assets
+- Helps users understand whether they are exposed and what to reduce first
+- Focuses on defense, not just opportunity discovery
+
+### Innovation（创新性）
+- Reframes onchain AI from trading copilot to defense-first asset safety workflow
+- Combines risk detection, wallet exposure mapping, and staged defensive planning
+
+### Reproducibility（可复制性）
+- Publishes local skills, prompt summaries, scenario definitions, benchmark flow, preflight checks, and OpenClaw usage docs
+- Supports demo mode even without a perfect live environment
+
+详细说明见：
+- [docs/JUDGING_INFO.md](./docs/JUDGING_INFO.md)
+- [docs/PROMPTS_AND_SCENARIOS.md](./docs/PROMPTS_AND_SCENARIOS.md)
 
 ## 最重要：OpenClaw 用户如何使用
 
@@ -199,6 +225,8 @@ RugShield includes:
 - `scenarios/demo-scenarios.v1.json`
 - mock replay flows
 - live prototype entry points
+- prompt and scenario summaries
+- judging alignment docs
 
 ## Output Boundaries
 
