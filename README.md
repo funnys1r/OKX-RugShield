@@ -20,6 +20,7 @@ Quick links:
 - [Evidence Ledger](./docs/EVIDENCE_LEDGER.md)
 - [Runbook](./docs/RUNBOOK.md)
 - [Benchmark Scenarios](./scenarios/demo-scenarios.v1.json)
+- [Official OKX Skills](https://github.com/okx/onchainos-skills)
 
 OKX RugShield is a local-first OpenClaw + OKX OnchainOS project that turns low-level token, market, and portfolio capabilities into a higher-level **rug-risk defense workflow**.
 
@@ -48,6 +49,29 @@ flowchart LR
 1. 安装官方 OKX / OnchainOS skills（如果你要 live 能力）
 2. 安装 `rugshield-scout` 和 `rugshield-guardian`
 3. 直接在 OpenClaw 对话中触发
+
+### 官方 OKX skills 安装方式
+
+根据官方仓库 `okx/onchainos-skills` 的 README，推荐安装方式是：
+
+```bash
+npx skills add okx/onchainos-skills
+```
+
+官方仓库：
+- `https://github.com/okx/onchainos-skills`
+
+如果你要 live mode，还需要配置官方仓库说明中的 OKX 凭证。官方 README 使用的变量名是：
+
+```bash
+OKX_API_KEY="your-api-key"
+OKX_SECRET_KEY="your-secret-key"
+OKX_PASSPHRASE="your-passphrase"
+```
+
+RugShield 当前同时兼容：
+- `OKX_SECRET_KEY`
+- `OKX_API_SECRET`
 
 ### 安装后可直接说
 
@@ -112,7 +136,13 @@ Dependency policy:
 
 ## For OpenClaw Users
 
-### Step 1: install local RugShield skills
+### Step 1: install official OKX / OnchainOS skills if you want live mode
+
+```bash
+npx skills add okx/onchainos-skills
+```
+
+### Step 2: install local RugShield skills
 
 ```bash
 node scripts/installer.js --core-only
@@ -125,12 +155,17 @@ bash skills/rugshield-scout/scripts/install-local.sh
 bash skills/rugshield-guardian/scripts/install-local.sh
 ```
 
-### Step 2: install official OKX / OnchainOS skills if you want live mode
+### Step 3: configure credentials for live mode
 
-如果你只想演示或 mock 使用，RugShield 可以先跑在 Demo Mode。
-如果你要启用更完整的 live token / portfolio 能力，需要先准备官方上游 skills 和相应环境。
+官方仓库 README 推荐：
 
-### Step 3: talk to OpenClaw directly
+```bash
+OKX_API_KEY="your-api-key"
+OKX_SECRET_KEY="your-secret-key"
+OKX_PASSPHRASE="your-passphrase"
+```
+
+### Step 4: talk to OpenClaw directly
 
 安装完成后，直接在 OpenClaw 中用自然语言触发，不需要先跑仓库命令。
 

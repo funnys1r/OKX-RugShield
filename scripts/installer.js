@@ -9,6 +9,8 @@ const coreOnly = args.includes('--core-only');
 const repoRoot = path.resolve(__dirname, '..');
 const workspaceSkillsDir = process.env.OPENCLAW_SKILLS_DIR || path.join(os.homedir(), '.openclaw', 'workspace', 'skills');
 const skillsToInstall = ['rugshield-scout', 'rugshield-guardian'];
+const officialRepo = 'https://github.com/okx/onchainos-skills';
+const officialInstall = 'npx skills add okx/onchainos-skills';
 
 function log(msg) {
   process.stdout.write(`${msg}\n`);
@@ -52,7 +54,10 @@ if (detected.length > 0) {
   log(`[OK] Detected upstream OKX / OnchainOS-related skills: ${detected.join(', ')}`);
 } else {
   log('[WARN] No upstream OKX / OnchainOS-related skill detected in the OpenClaw skills dir.');
-  log('[WARN] Demo mode can still work. Install upstream OKX skills before claiming fuller live support.');
+  log(`[WARN] Install official upstream skills first for fuller live mode:`);
+  log(`       ${officialInstall}`);
+  log(`       ${officialRepo}`);
+  log('[WARN] Demo mode can still work without them.');
 }
 
 if (!coreOnly) {
@@ -78,6 +83,7 @@ for (const skill of skillsToInstall) {
 
 log('');
 log('Next steps:');
-log('1. Run npm run preflight');
-log('2. Use demo mode immediately if upstream dependencies are not installed');
-log('3. Install official OKX / OnchainOS skills and configure .env for stronger live prototype claims');
+log(`1. If not already installed, run: ${officialInstall}`);
+log('2. Run npm run preflight');
+log('3. Use demo mode immediately if upstream dependencies are not installed');
+log('4. Configure one of the supported secret names for live mode: OKX_SECRET_KEY or OKX_API_SECRET');

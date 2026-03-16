@@ -26,6 +26,18 @@ check_file_contains() {
   [[ -f "$file" ]] && grep -Eq "^[[:space:]]*${key}=" "$file"
 }
 
+check_any_key() {
+  local file="$1"
+  shift
+  local key
+  for key in "$@"; do
+    if check_file_contains "$file" "$key"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 check_skill_like() {
   local pattern="$1"
   find "$SKILLS_DIR" -maxdepth 2 -type f \( -name SKILL.md -o -name package.json \) 2>/dev/null | grep -Eiq "$pattern"
@@ -90,7 +102,7 @@ fi
 if check_skill_like 'okx|onchainos'; then
   pass "Official OKX / OnchainOS-related skill detected"
 else
-  warning "Official OKX / OnchainOS-related skill not detected; live mode may be limited"
+  warning "Official OKX / OnchainOS-related skill not detected; install with: npx skills add okx/onchainos-skills"
 fi
 
 section "Configuration"
@@ -100,13 +112,23 @@ else
   warning ".env not found at ${ENV_FILE}"
 fi
 
-for key in OKX_API_KEY OKX_API_SECRET OKX_API_PASSPHRASE; do
-  if check_file_contains "$ENV_FILE" "$key"; then
-    pass "${key} configured"
-  else
-    warning "${key} missing"
-  fi
-done
+if check_file_contains "$ENV_FILE" "OKX_API_KEY"; then
+  pass "OKX_API_KEY configured"
+else
+  warning "OKX_API_KEY missing"
+fi
+
+if check_any_key "$ENV_FILE" "OKX_SECRET_KEY" "OKX_API_SECRET"; then
+  pass "OKX secret configured (OKX_SECRET_KEY or OKX_API_SECRET)"
+else
+  warning "OKX secret missing (set OKX_SECRET_KEY or OKX_API_SECRET)"
+fi
+
+if check_any_key "$ENV_FILE" "OKX_PASSPHRASE" "OKX_API_PASSPHRASE"; then
+  pass "OKX passphrase configured (OKX_PASSPHRASE or OKX_API_PASSPHRASE)"
+else
+  warning "OKX passphrase missing (set OKX_PASSPHRASE or OKX_API_PASSPHRASE)"
+fi
 
 if check_file_contains "$ENV_FILE" "AUTO_DEFENSE_MODE"; then
   pass "AUTO_DEFENSE_MODE configured"
@@ -124,9 +146,9 @@ fi
 LIVE_READY=1
 [[ -f "$ENV_FILE" ]] || LIVE_READY=0
 check_skill_like 'okx|onchainos' || LIVE_READY=0
-for key in OKX_API_KEY OKX_API_SECRET OKX_API_PASSPHRASE; do
-  check_file_contains "$ENV_FILE" "$key" || LIVE_READY=0
-done
+check_file_contains "$ENV_FILE" "OKX_API_KEY" || LIVE_READY=0
+check_any_key "$ENV_FILE" "OKX_SECRET_KEY" "OKX_API_SECRET" || LIVE_READY=0
+check_any_key "$ENV_FILE" "OKX_PASSPHRASE" "OKX_API_PASSPHRASE" || LIVE_READY=0
 
 if [[ "$LIVE_READY" -eq 1 ]]; then
   pass "Live mode likely available"
