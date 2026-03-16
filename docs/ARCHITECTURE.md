@@ -1,67 +1,108 @@
 # Architecture
 
-OKX RugShield is a dual-skill onchain defense workflow built on top of OpenClaw and official OKX / OnchainOS skills.
+OKX RugShield is an onchain **meme / rug defense workflow** built on OpenClaw and official OKX / OnchainOS skills.
 
-## Layering
+The project is intentionally split into three layers:
 
-### 1. Primitive capability layer
+## 1. Primitive capability layer
 Provided by upstream OKX / OnchainOS skills when available:
 
-- token / market lookup
+- token lookup
+- market / signal lookup
 - wallet portfolio lookup
-- route or execution-related capabilities
-- other read-only or execution-adjacent onchain primitives
+- route simulation or execution-adjacent primitives
+- other read-only onchain building blocks
 
-### 2. Workflow layer
-Provided by RugShield:
+RugShield does **not** try to replace these primitives.
+It composes them into a higher-level defensive system.
 
-- risk signal interpretation
-- Threat Report generation
-- wallet exposure mapping
-- staged defensive planning
-- simulation and audit-oriented output
+## 2. Agent layer
+Provided by RugShield itself.
 
-This separation is intentional.
-RugShield does not try to replace OKX primitives. It packages them into a higher-level defense workflow.
+### Scout Agent (`rugshield-scout`)
+Primary job:
+- discover token-level risk
 
-## Skill responsibilities
-
-### Scout (`rugshield-scout`)
-Input:
+Typical inputs:
 - token
 - chain
-- market or onchain signal context
-- mock event replay input
+- market context
+- signal context
+- mock replay input
 
-Output:
-- structured Threat Report
+Typical outputs:
+- structured `Threat Report`
+- risk level
+- confidence
+- detected signals
+- recommended next action
 
+Typical signals:
+- dev dumping
+- smart-money exits
+- liquidity deterioration
+- suspicious tags / honeypot-like warnings
+- abnormal price / volume behavior
+
+### Guardian Agent (`rugshield-guardian`)
 Primary job:
-- identify rug-related signals such as liquidity drop, abnormal volume, dev selling, and smart-money exit
+- map threat context to wallet exposure and generate a defensive response
 
-### Guardian (`rugshield-guardian`)
-Input:
-- Threat Report
+Typical inputs:
+- `Threat Report`
 - wallet address or portfolio context
 - target chains
-- operating mode
+- mode / safety constraints
 
-Output:
-- wallet exposure summary
-- staged defense plan
+Typical outputs:
+- exposure summary
+- multi-wallet exposure aggregation
+- staged defensive plan
+- route-simulation-oriented planning
 - execution conditions
 - confirmation requirements
 
+## 3. Watcher / Patrol layer
+This is the monitoring and orchestration layer.
+
 Primary job:
-- convert threat context into a wallet-aware defensive response
+- continuously monitor multiple wallets and surface only actionable changes
+
+Responsibilities:
+- scheduled scans
+- batch invocation of Guardian flows
+- diffing current scan vs previous scan
+- alerting only on new / worsening risk
+- serving as the proactive OpenClaw monitoring entry point
+
+## Main flow
+
+### Threat-driven path
+```text
+Signals / Token Risk
+    -> Scout
+    -> Threat Report
+    -> Guardian
+    -> Exposure Mapping
+    -> Staged Defense Plan
+```
+
+### Monitoring path
+```text
+Wallet List / Schedule
+    -> Watcher
+    -> Guardian Batch Scan
+    -> Diff vs Previous State
+    -> Alert / Report
+```
 
 ## Runtime modes
 
 ### Demo Mode
-Used when:
+Use when:
 - official OKX dependencies are missing
 - credentials are missing
-- judges or reviewers need a fast local walkthrough
+- judges or reviewers need a fast walkthrough
 
 Supports:
 - mock replay
@@ -70,54 +111,34 @@ Supports:
 - benchmark scenarios
 
 ### Live Mode
-Used when:
+Use when:
 - official OKX / OnchainOS skills are installed
 - credentials are configured
-- environment is correctly prepared
+- local environment is ready
 
 Supports:
 - live signal prototype path
-- live portfolio prototype path
-
-## Main flow
-
-```text
-Signals -> Scout -> Threat Report -> Guardian -> Exposure Check -> Staged Defense Plan
-```
-
-Extended view:
-
-```text
-[Token / Market / Onchain Inputs]
-        -> [Scout]
-        -> [Threat Report]
-        -> [Guardian]
-        + [Wallet Portfolio]
-        -> [Risk Prioritization]
-        -> [Staged Exit / Defense Plan]
-        -> [Simulation / Conditional Action]
-```
+- live wallet portfolio prototype path
+- multi-wallet monitoring MVP
 
 ## Design choices
 
 ### Graceful downgrade
-If upstream OKX dependencies are unavailable, the project should not become unusable.
-Instead it should:
+If live dependencies are unavailable, RugShield should:
 - warn clearly
-- continue in demo or analysis mode when possible
-- only claim live capability when the environment truly supports it
+- degrade to demo / analysis mode when possible
+- never overclaim live capability
 
 ### Auditability
-Outputs should remain explainable and structured:
-- risk level
-- confidence
-- exposed positions
-- staged plan
-- execution condition
-- confirmation requirement
+Outputs should remain explainable:
+- why something is risky
+- which wallets are exposed
+- what got filtered
+- what should be handled first
+- whether execution is allowed or only simulated
 
-### Contest fit
-The repository is designed to be:
-- demo-first
-- benchmarkable
-- understandable by judges without a perfect live environment
+### Safety posture
+The project is defense-first:
+- prioritize alerts and planning over autonomous execution
+- keep human confirmation in the loop
+- optimize for meme / rug avoidance, not trade automation

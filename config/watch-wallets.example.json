@@ -1,0 +1,21 @@
+{
+  "scan_label": "meme-rug-watchlist",
+  "defaults": {
+    "chains": ["xlayer", "ethereum", "base", "arbitrum", "bsc"],
+    "limit": 8,
+    "notify_on": ["new_high_risk", "new_medium_risk", "new_top_exposure", "risk_priority_raised", "risk_upgraded"],
+    "value_change_alert_usd": 100
+  },
+  "wallets": [
+    {
+      "name": "main-wallet",
+      "address": "0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097"
+    },
+    {
+      "name": "meme-bag-wallet",
+      "address": "0x000000000000000000000000000000000000dead",
+      "chains": ["base", "arbitrum", "bsc"],
+      "limit": 5
+    }
+  ]
+}

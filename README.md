@@ -1,210 +1,117 @@
 # OKX RugShield 🛡️
 
-[简体中文](./README.md)
-
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-0f766e)](./package.json)
-[![OpenClaw Dual Skill](https://img.shields.io/badge/OpenClaw-dual%20skill-1d4ed8)](./SKILL.md)
+[![OpenClaw Skill System](https://img.shields.io/badge/OpenClaw-Scout%20%2B%20Guardian%20%2B%20Watcher-1d4ed8)](./SKILL.md)
 [![Model GPT-5.4](https://img.shields.io/badge/model-GPT--5.4-9333ea)](#)
 [![OKX Skills Based](https://img.shields.io/badge/OKX%20Skills-based-f59e0b)](./docs/AI_SETUP.md)
-[![Defense Workflow](https://img.shields.io/badge/focus-defense%20workflow-7c3aed)](./docs/GUARDIAN_PIPELINE.md)
-[![Demo + Live](https://img.shields.io/badge/mode-demo%20%7C%20live-2563eb)](./scripts/preflight.sh)
+[![Defense Workflow](https://img.shields.io/badge/focus-meme%20%2F%20rug%20defense-7c3aed)](./docs/GUARDIAN_PIPELINE.md)
 
-Built on OKX Skills, packaged as an onchain **defense workflow**.
+OKX RugShield is an OpenClaw + OKX OnchainOS project focused on **onchain meme / rug defense**.
 
-## Demo runtime
+It is designed as a three-layer system:
 
-- Claw runtime: **OpenClaw**
-- Model version: **GPT-5.4**
+- **Scout**: discovers token-level threats
+- **Guardian**: maps those threats to wallet exposure and defense plans
+- **Watcher**: monitors multiple wallets on a schedule and alerts on new / worsening risk
 
-Quick links:
+## Why this project exists
 
-- [Skill Layer](./SKILL.md)
-- [OpenClaw 安装即用](./docs/OPENCLAW_USAGE.md)
-- [Judging Info](./docs/JUDGING_INFO.md)
-- [Prompts and Scenarios](./docs/PROMPTS_AND_SCENARIOS.md)
-- [Architecture](./docs/ARCHITECTURE.md)
-- [Guardian Pipeline](./docs/GUARDIAN_PIPELINE.md)
-- [Live Proof](./docs/LIVE_PROOF.md)
-- [Evidence Ledger](./docs/EVIDENCE_LEDGER.md)
-- [Runbook](./docs/RUNBOOK.md)
-- [Benchmark Scenarios](./scenarios/demo-scenarios.v1.json)
-- [Official OKX Skills](https://github.com/okx/onchainos-skills)
+Most onchain AI tools help users find the next opportunity.
+RugShield focuses on the opposite problem:
 
-OKX RugShield is a local-first OpenClaw + OKX OnchainOS project that turns low-level token, market, and portfolio capabilities into a higher-level **rug-risk defense workflow**.
+- hidden exposure to risky meme coins
+- sudden dev dumping or smart-money exits
+- deteriorating liquidity
+- dust / scam token clutter across multiple wallets
+- not knowing what to reduce first when risk shows up
 
-OKX provides the primitive skills.
-RugShield packages them into a reusable safety pipeline that users or other agents can call to:
-- detect rug-related risk signals
-- verify wallet exposure
-- generate staged exit plans
-- produce auditable defense reports
+## Architecture at a glance
 
 ```mermaid
 flowchart LR
   A[Token / Market / Onchain Signals] --> B[Scout]
   B --> C[Threat Report]
   C --> D[Guardian]
-  E[Wallet Portfolio] --> D
-  D --> F[Exposure Check]
+  E[Wallet Portfolio / Multi-Wallet Watchlist] --> D
+  D --> F[Exposure Mapping]
   F --> G[Staged Defense Plan]
-  G --> H[Simulation / Conditional Action]
+  H[Watcher / Patrol Schedule] --> I[Guardian Batch Scan]
+  I --> J[Diff / Alert / Report]
 ```
 
-## 评审速览（Scoring Alignment）
+## Layer responsibilities
 
-### Integration（结合度）
-- Built on official `okx/onchainos-skills` as the primitive capability layer
-- Uses OpenClaw as the natural-language dual-skill runtime
-- Live behavior becomes meaningfully stronger when official OKX skills are installed
+### 1. Scout Agent
+`rugshield-scout` is responsible for:
 
-### Utility（实用性）
-- Targets a real user pain: hidden exposure to risky onchain assets
-- Helps users understand whether they are exposed and what to reduce first
-- Focuses on defense, not just opportunity discovery
+- scanning token risk signals
+- identifying patterns such as dev dumping, smart-money exits, liquidity deterioration, and abnormal trading behavior
+- producing structured `Threat Report` output
+- generating simulated threat events for demos
+- supporting proactive patrol / alert entry points in the prototype stage
 
-### Innovation（创新性）
-- Reframes onchain AI from trading copilot to defense-first asset safety workflow
-- Combines risk detection, wallet exposure mapping, and staged defensive planning
+### 2. Guardian Agent
+`rugshield-guardian` is responsible for:
 
-### Reproducibility（可复制性）
-- Publishes local skills, prompt summaries, scenario definitions, benchmark flow, preflight checks, and OpenClaw usage docs
-- Supports demo mode even without a perfect live environment
-- Public demo context is disclosed: OpenClaw + GPT-5.4
+- checking whether a wallet holds risky or related assets
+- aggregating exposure across multiple wallets
+- generating staged defensive exit plans
+- simulating routes before any execution-oriented step
+- deciding whether confirmation is required based on the active mode
+- bridging from `Threat Report` to wallet-aware defense planning
+- producing readable defense reports from real wallet portfolio data
 
-详细说明见：
-- [docs/JUDGING_INFO.md](./docs/JUDGING_INFO.md)
-- [docs/PROMPTS_AND_SCENARIOS.md](./docs/PROMPTS_AND_SCENARIOS.md)
+### 3. Watcher / Patrol Layer
+Watcher is the monitoring layer for scheduled use:
 
-## 最重要：OpenClaw 用户如何使用
+- scans multiple wallets repeatedly
+- calls Guardian in batch
+- compares current scan results to previous state
+- surfaces only new or worsening risk
+- provides the proactive monitoring entry point for OpenClaw automation
 
-如果你是 **OpenClaw 用户**，主路径不是手动跑 npm 命令，而是：
-
-1. 安装官方 OKX / OnchainOS skills（如果你要 live 能力）
-2. 安装 `rugshield-scout` 和 `rugshield-guardian`
-3. 直接在 OpenClaw 对话中触发
-
-### 官方 OKX skills 安装方式
-
-根据官方仓库 `okx/onchainos-skills` 的 README，推荐安装方式是：
-
-```bash
-npx skills add okx/onchainos-skills
-```
-
-官方仓库：
-- `https://github.com/okx/onchainos-skills`
-
-如果你要 live mode，还需要配置官方仓库说明中的 OKX 凭证。官方 README 使用的变量名是：
-
-```bash
-OKX_API_KEY="your-api-key"
-OKX_SECRET_KEY="your-secret-key"
-OKX_PASSPHRASE="your-passphrase"
-```
-
-RugShield 当前同时兼容：
-- `OKX_SECRET_KEY`
-- `OKX_API_SECRET`
-
-### 安装后可直接说
-
-#### Scout 场景
-- `扫描 OKB 在 xlayer 上有没有 rug 风险`
-- `回放一个 mock 风险事件并输出 Threat Report`
-- `开始主动巡检高风险 token`
-
-#### Guardian 场景
-- `检查我这个地址有没有暴露在高风险 token 上`
-- `根据 Threat Report 给我一个退出方案`
-- `用 Safe Mode 输出一个防守建议`
-
-详细安装和使用说明见：
-- [docs/OPENCLAW_USAGE.md](./docs/OPENCLAW_USAGE.md)
-
-## Product Structure
-
-The product structure is explicit:
-
-- **signal layer**: identify suspicious token behavior and convert it into a structured Threat Report
-- **defense layer**: map that threat to real wallet exposure and prioritize what needs attention first
-- **response layer**: turn the situation into a staged, auditable defensive plan instead of vague warnings
-
-RugShield does not try to replace the official OKX primitive skills.
-It acts as the **defense and control layer** built on top of them.
-
-## Demo vs Live Usage
+## Demo vs Live
 
 ### Demo Mode
-Demo mode is designed for judges, reviewers, and users who do not yet have the full OKX dependency stack.
+Use when:
+- official OKX dependencies are not fully installed
+- credentials are unavailable
+- you want a fast walkthrough for judges or reviewers
 
-It supports:
+Supports:
 - mock risk scans
-- mock event replay
+- mock patrol
 - guardian simulation
-- manual analysis mode
+- benchmark scenarios
 
 ### Live Mode
-Live mode enables:
-- live token / market signal checks
-- live wallet portfolio checks
-- stronger guardian response flows
+Use when:
+- official OKX / OnchainOS skills are installed
+- credentials are configured
+- environment is ready
 
-Live mode depends on:
-- official OKX / OnchainOS skills
-- OKX credentials
-- a correct local runtime environment
+Supports:
+- live token signal prototype path
+- live wallet portfolio prototype path
+- multi-wallet watcher MVP
 
-Dependency policy:
+## OpenClaw-first usage
 
-> detect first, warn clearly, degrade gracefully, and only claim live capability when the environment truly supports it.
+If you are an OpenClaw user, the primary path is **not** manually running npm commands.
+The main path is:
 
-## What It Does
+1. install official OKX / OnchainOS skills
+2. install RugShield skills
+3. talk to OpenClaw directly
+4. optionally enable watcher-based scheduled monitoring
 
-- **detect rug risk**: identify liquidity drops, abnormal volume, dev sell pressure, smart-money exits, and similar signals
-- **generate Threat Report**: convert raw findings into a structured object with risk level, confidence, and next action
-- **check wallet exposure**: inspect whether risky tokens or related assets exist in the target wallet portfolio
-- **build staged exit plans**: prioritize direct exposure first and return a sequence of defensive actions
-- **simulate response**: provide an auditable simulated plan when real execution should not happen
-- **support OpenClaw skills**: split the workflow into `rugshield-scout` and `rugshield-guardian`
+See:
+- [SKILL.md](./SKILL.md)
+- [docs/OPENCLAW_USAGE.md](./docs/OPENCLAW_USAGE.md)
+- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- [docs/GUARDIAN_PIPELINE.md](./docs/GUARDIAN_PIPELINE.md)
 
-## For OpenClaw Users
-
-### Step 1: install official OKX / OnchainOS skills if you want live mode
-
-```bash
-npx skills add okx/onchainos-skills
-```
-
-### Step 2: install local RugShield skills
-
-```bash
-node scripts/installer.js --core-only
-```
-
-或手动安装：
-
-```bash
-bash skills/rugshield-scout/scripts/install-local.sh
-bash skills/rugshield-guardian/scripts/install-local.sh
-```
-
-### Step 3: configure credentials for live mode
-
-官方仓库 README 推荐：
-
-```bash
-OKX_API_KEY="your-api-key"
-OKX_SECRET_KEY="your-secret-key"
-OKX_PASSPHRASE="your-passphrase"
-```
-
-### Step 4: talk to OpenClaw directly
-
-安装完成后，直接在 OpenClaw 中用自然语言触发，不需要先跑仓库命令。
-
-## For Judges and Developers
-
-如果你是评委、开发者、或想在没有完整 OpenClaw 环境时做本地验证，可以使用仓库命令入口：
+## Local developer / judge commands
 
 ```bash
 npm install
@@ -217,64 +124,34 @@ npm run simulate:guardian
 npm run benchmark:verbose
 ```
 
-Optional live prototype examples:
+### Live prototypes
 
 ```bash
 npm run live:signal -- OKB xlayer
-npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 1
+npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 8
+npm run watch:wallets -- --config ./config/watch-wallets.example.json
 ```
 
-## Reproducibility
+## What the current prototype already does
 
-RugShield includes:
-- `scripts/preflight.sh`
-- `scripts/benchmark-runner.js`
-- `scenarios/demo-scenarios.v1.json`
-- mock replay flows
-- live prototype entry points
-- prompt and scenario summaries
-- judging alignment docs
-
-## Output Boundaries
-
-### Already implemented
-- dual-skill structure: Scout + Guardian
+- Scout + Guardian skill split
 - Threat Report generation
-- mock / replay / patrol flows
-- live signal prototype
-- live portfolio prototype
-- staged defense strategy prototype
-- preflight and lightweight benchmark framework
+- mock replay / mock patrol flows
+- live portfolio-readable report output
+- garbage-position filtering and risk grouping
+- staged defense recommendations
+- multi-wallet watcher MVP entrypoint
 
-### Not fully implemented yet
-- production-grade automatic execution
+## What is still prototype-stage
+
+- production-grade automated execution
 - full real-money autonomous defense loop
-- mempool / pending transaction preemptive defense
-- full autonomous patrol scheduler
+- advanced watcher alert delivery integrations
+- route simulation hardening across all chains
+- richer historical diff analytics
 
-So the project should be evaluated accurately as:
+## Positioning
 
-> a demonstrable, testable, extensible onchain defense prototype
+A concise positioning statement for the repo:
 
-## Why It Matters
-
-Most onchain AI products help users find the next opportunity.
-RugShield focuses on what users fear more:
-
-- hidden exposure
-- rapidly worsening token risk
-- not knowing what to reduce first
-- acting too late
-
-RugShield pushes onchain AI one step closer to a safety-native workflow:
-
-> detect risk early, map it to real holdings, and return a usable defense response before the loss expands.
-
-## Roadmap
-
-- strengthen OpenClaw-native installation and invocation flow
-- add stricter executable benchmark validation
-- strengthen machine-readable report schemas
-- improve official OKX dependency detection
-- add screenshots, GIFs, and X demo links
-- extend the defense loop under explicit safety and authorization controls
+> **OKX RugShield is a multi-wallet onchain meme / rug defense system: Scout discovers threats, Guardian maps exposure and plans defense, and Watcher performs scheduled patrol plus alerting.**

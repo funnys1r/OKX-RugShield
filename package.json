@@ -16,6 +16,7 @@
     "simulate:guardian": "node cli/simulate-guardian.js",
     "live:signal": "node cli/fetch-live-signal.js",
     "live:portfolio": "node cli/live-portfolio-guardian.js",
+    "watch:wallets": "node cli/watch-wallets.js",
     "benchmark": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json",
     "benchmark:strict": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json --strict",
     "benchmark:verbose": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json --verbose",
