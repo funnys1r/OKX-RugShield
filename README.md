@@ -20,6 +20,7 @@ OKX RugShield 由两个核心 Skill 组成：
 - 本地预检
 - mock 演示
 - 比赛现场没有完整 OpenClaw 环境时的兜底展示
+- 原型级链路验证
 
 ## 2. 当前已实现 / 当前不包含
 
@@ -28,13 +29,16 @@ OKX RugShield 由两个核心 Skill 组成：
 - 基于规则与流程定义的风险识别、暴露检查、退出策略与模拟响应框架
 - `npm run demo` 本地 mock 演示
 - `npm run replay:mock` 基于 mock 输入的事件回放入口
+- `npm run patrol:mock` 主动巡检 / 主动告警原型入口
+- `npm run simulate:guardian` Guardian 闭环桥接原型入口
+- `npm run live:signal` 基于真实 OKX OnchainOS token/market 数据的原型入口
 - `mock/mock-rug-event.json` 演示输入样例
 - `lib/exit-strategy.js` 动态退出比例计算模块（原型）
 - 外部 OKX OnchainOS Skills 的安装与本地 Skill 注入流程
 
 ### 当前不包含或未完整实现
 - 完整实盘级自动执行程序
-- 基于真实链上实时池子数据的精细化退出比例计算
+- 基于真实钱包实时暴露的完整闭环
 - Mempool / Pending Transaction 抢先防御
 - 完整自动化巡检调度框架
 
@@ -46,6 +50,7 @@ OKX RugShield 由两个核心 Skill 组成：
 - 识别 Dev 砸盘、聪明钱撤退、流动性恶化等信号
 - 输出结构化 `Threat Report`
 - 在演示场景下生成模拟风险事件
+- 在原型阶段支持主动巡检与主动告警入口
 
 ### 3.2 Guardian Agent
 `rugshield-guardian` 负责：
@@ -54,11 +59,15 @@ OKX RugShield 由两个核心 Skill 组成：
 - 生成阶梯式退出策略
 - 在执行前进行路由模拟
 - 根据模式决定请求确认或自动响应
+- 在原型阶段支持从 Threat Report 走到策略/路由规划的桥接模拟
 
-### 3.3 Mock / Demo 能力
+### 3.3 Mock / Demo / Prototype 能力
 项目提供：
 - `npm run demo`：本地 mock 演示
 - `npm run replay:mock`：读取 mock 事件并回放 Scout → Guardian 联动
+- `npm run patrol:mock`：模拟 Scout 主动巡检并交给 Guardian 生成防守建议
+- `npm run simulate:guardian`：模拟 Guardian 从 Threat Report 走到退出策略与路由规划
+- `npm run live:signal`：读取真实 OKX OnchainOS token/market 数据并生成原型级 Guardian 输出
 - `mock/mock-rug-event.json`：最小可用的模拟事件输入样例
 
 ## 4. 工作流程
@@ -111,16 +120,21 @@ node scripts/installer.js --core-only
 
 - `运行 场景1：午夜土狗闪崩 模拟演示`
 - `执行全仓体检`
+- `开始主动巡检并在发现高风险时提醒我`
 - `Guardian Agent，检查最新 Threat Report 并告诉我当前持仓暴露`
 
-### 6.2 CLI 兜底入口
+### 6.2 CLI 原型入口
 如果暂时没有完整 OpenClaw 环境，可运行：
 
 ```bash
 npm run demo
+npm run replay:mock
+npm run patrol:mock
+npm run simulate:guardian
+npm run live:signal -- OKB xlayer
 ```
 
-该模式只用于本地 mock 演示，不代表真实链上执行。
+这些命令用于 mock / 原型验证，不代表真实链上自动执行。
 
 ## 7. 运行模式
 
@@ -132,11 +146,11 @@ npm run demo
 当 `AUTO_DEFENSE_MODE=true` 时，Guardian 可以在高危场景下自动处理。
 
 是否能够真正自动执行，取决于：
-- 当前 OpenClaw 环境是否已正确安装相关 OKX Skills
+- 当前 OpenClaw 环境是否已正确安装相关 OKX OnchainOS Skills
 - 是否配置了执行权限
 - 是否具备真实链上调用能力
 
-## 8. Mock 测试
+## 8. 原型与测试入口
 
 ### 8.1 本地 mock 演示
 
@@ -160,7 +174,23 @@ npm run patrol:mock
 
 该命令会模拟 Scout 主动巡检高风险资产、主动发出 Threat Report，并由 Guardian 在用户尚未先发起交易的情况下生成防守建议。
 
-### 8.4 Mock 测试包
+### 8.4 Guardian 闭环模拟
+
+```bash
+npm run simulate:guardian
+```
+
+该命令会读取 Threat Report / mock 事件输入，调用 `lib/exit-strategy.js`，并输出更接近真实 Guardian pipeline 的桥接报告。
+
+### 8.5 真实链上数据原型
+
+```bash
+npm run live:signal -- OKB xlayer
+```
+
+该命令会调用真实的 `okx-dex-token` / `okx-dex-market` 数据，并生成原型级 Guardian 策略输出。
+
+### 8.6 Mock 测试包
 
 仓库内提供：
 
@@ -179,6 +209,7 @@ npm run patrol:mock
 ```text
 OKX-RugShield/
 ├── cli/
+│   ├── fetch-live-signal.js
 │   ├── patrol-mock.js
 │   ├── replay-mock.js
 │   ├── simulate-guardian.js
@@ -193,7 +224,10 @@ OKX-RugShield/
 ├── docs/
 │   ├── ACTIVE_DEFENSE.md
 │   ├── ARCHITECTURE.md
+│   ├── GUARDIAN_PIPELINE.md
 │   ├── INTEGRATION_MATRIX.md
+│   ├── LIVE_DATA_PROTOTYPE.md
+│   ├── PROACTIVE_PATROL.md
 │   ├── PRODUCTION_CHECKLIST.md
 │   └── RUNBOOK.md
 ├── mock/
@@ -210,7 +244,7 @@ OKX-RugShield/
 当前版本的边界如下：
 
 - 项目的主形态是 OpenClaw Skill，不是独立量化交易系统
-- `npm run demo` 与 `npm run replay:mock` 都是 mock / 原型验证入口，不是实盘执行证明
+- `npm run demo`、`npm run replay:mock`、`npm run patrol:mock`、`npm run simulate:guardian`、`npm run live:signal` 都属于原型验证入口，不是实盘执行证明
 - `mock/mock-rug-event.json` 是演示输入样例，不是完整自动回放框架
 - Mempool 抢先防御、多钱包并发执行、更加精细的深度计算，当前主要属于增强方向
 
@@ -222,6 +256,7 @@ OKX-RugShield/
 - Mempool / Pending Transaction 级提前响应
 - 多钱包并发路由模拟与并发执行
 - 更完整的 mock 回放与测试流
+- 更接近真实后台守护的主动巡检调度机制
 - 与 AA 钱包 / 账户抽象执行策略层更深结合
 
 ## 12. 安全提示
