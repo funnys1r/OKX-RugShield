@@ -22,6 +22,21 @@ OKX RugShield 由两个核心 Skill 组成：
 - 比赛现场没有完整 OpenClaw 环境时的兜底展示
 - 原型级链路验证
 
+## 模型与 Agent 配置说明
+
+- 本项目的标准运行入口是 **OpenClaw**。
+- Agent 结构采用双 Skill 形态：`rugshield-scout` + `rugshield-guardian`。
+- 当前项目的 Agent 行为定义主要承载于：
+  - `skills/rugshield-scout/SKILL.md`
+  - `skills/rugshield-guardian/SKILL.md`
+- 当前仓库中的本地脚本（如 `demo` / `replay:mock` / `patrol:mock` / `simulate:guardian` / `live:signal` / `live:portfolio`）用于原型验证，不代表仓库把底层大模型固定死在某一个单一提供商或单一版本上。
+- 更详细的 AI / Agent 配置说明见：`docs/AI_SETUP.md`
+
+## 展示链接（待补）
+
+- X（推特）演示链接：待补
+- OKX 星球演示链接：待补
+
 ## 2. 当前已实现 / 当前不包含
 
 ### 当前已实现
