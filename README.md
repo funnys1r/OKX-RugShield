@@ -21,16 +21,31 @@ OKX RugShield 由两个核心 Skill 组成：
 - mock 演示
 - 比赛现场没有完整 OpenClaw 环境时的兜底展示
 
-## 2. 核心功能
+## 2. 当前已实现 / 当前不包含
 
-### 2.1 Scout Agent
+### 当前已实现
+- 基于 OpenClaw 的双 Skill 结构：`rugshield-scout` + `rugshield-guardian`
+- 基于规则与流程定义的风险识别、暴露检查、退出策略与模拟响应框架
+- `npm run demo` 本地 mock 演示
+- `mock/mock-rug-event.json` 演示输入样例
+- 外部 OKX OnchainOS Skills 的安装与本地 Skill 注入流程
+
+### 当前不包含或未完整实现
+- 完整实盘级自动执行程序
+- 基于真实池子深度的精细化退出比例计算代码
+- Mempool / Pending Transaction 抢先防御
+- 完整自动回放测试框架
+
+## 3. 核心功能
+
+### 3.1 Scout Agent
 `rugshield-scout` 负责：
 - 扫描代币风险
 - 识别 Dev 砸盘、聪明钱撤退、流动性恶化等信号
 - 输出结构化 `Threat Report`
 - 在演示场景下生成模拟风险事件
 
-### 2.2 Guardian Agent
+### 3.2 Guardian Agent
 `rugshield-guardian` 负责：
 - 检查用户是否持有相关风险资产
 - 聚合多钱包持仓暴露
@@ -38,12 +53,12 @@ OKX RugShield 由两个核心 Skill 组成：
 - 在执行前进行路由模拟
 - 根据模式决定请求确认或自动响应
 
-### 2.3 Mock / Demo 能力
+### 3.3 Mock / Demo 能力
 项目提供：
 - `npm run demo`：本地 mock 演示
 - `mock/mock-rug-event.json`：最小可用的模拟事件输入样例
 
-## 3. 工作流程
+## 4. 工作流程
 
 RugShield 的基本工作流程如下：
 
@@ -53,15 +68,15 @@ RugShield 的基本工作流程如下：
 4. Guardian 结合风险等级、流动性深度、滑点与模式配置生成退出方案
 5. 在 `Safe Mode` 下请求 `CONFIRM`，或在满足条件时执行自动响应
 
-## 4. 安装与接入
+## 5. 安装与接入
 
-### 4.1 安装依赖
+### 5.1 安装依赖
 
 ```bash
 npm install
 ```
 
-### 4.2 创建环境文件
+### 5.2 创建环境文件
 
 ```bash
 cp .env.example .env
@@ -73,7 +88,7 @@ cp .env.example .env
 - `OKX_API_PASSPHRASE`
 - `AUTO_DEFENSE_MODE`
 
-### 4.3 安装 OpenClaw 所需技能
+### 5.3 安装 OpenClaw 所需技能
 
 ```bash
 npm run install:core
@@ -86,16 +101,16 @@ node scripts/installer.js --core-only
 - 把 `rugshield-scout` 与 `rugshield-guardian` 复制到 `~/.openclaw/workspace/skills/`
 - 运行预检
 
-## 5. 使用方式
+## 6. 使用方式
 
-### 5.1 OpenClaw 标准入口
+### 6.1 OpenClaw 标准入口
 推荐在 OpenClaw 聊天界面中直接触发，例如：
 
 - `运行 场景1：午夜土狗闪崩 模拟演示`
 - `执行全仓体检`
 - `Guardian Agent，检查最新 Threat Report 并告诉我当前持仓暴露`
 
-### 5.2 CLI 兜底入口
+### 6.2 CLI 兜底入口
 如果暂时没有完整 OpenClaw 环境，可运行：
 
 ```bash
@@ -104,7 +119,7 @@ npm run demo
 
 该模式只用于本地 mock 演示，不代表真实链上执行。
 
-## 6. 运行模式
+## 7. 运行模式
 
 ### Safe Mode
 默认模式。
@@ -118,15 +133,15 @@ npm run demo
 - 是否配置了执行权限
 - 是否具备真实链上调用能力
 
-## 7. Mock 测试
+## 8. Mock 测试
 
-### 7.1 本地 mock 演示
+### 8.1 本地 mock 演示
 
 ```bash
 npm run demo
 ```
 
-### 7.2 Mock 测试包
+### 8.2 Mock 测试包
 
 仓库内提供：
 
@@ -140,7 +155,7 @@ npm run demo
 
 它用于帮助开发者和评审快速理解项目的风险输入与策略输出结构。
 
-## 8. 仓库结构
+## 9. 仓库结构
 
 ```text
 OKX-RugShield/
@@ -151,6 +166,7 @@ OKX-RugShield/
 │   └── rugshield-guardian/SKILL.md
 ├── docs/
 │   ├── ARCHITECTURE.md
+│   ├── INTEGRATION_MATRIX.md
 │   ├── PRODUCTION_CHECKLIST.md
 │   └── RUNBOOK.md
 ├── mock/
@@ -162,7 +178,7 @@ OKX-RugShield/
 └── README.md
 ```
 
-## 9. 当前限制
+## 10. 当前限制
 
 当前版本的边界如下：
 
@@ -171,7 +187,7 @@ OKX-RugShield/
 - `mock/mock-rug-event.json` 是演示输入样例，不是完整自动回放框架
 - Mempool 抢先防御、多钱包并发执行、更加精细的深度计算，当前主要属于增强方向
 
-## 10. 后续规划
+## 11. 后续规划
 
 后续增强方向包括：
 
@@ -180,7 +196,7 @@ OKX-RugShield/
 - 多钱包并发路由模拟与并发执行
 - 更完整的 mock 回放与测试流
 
-## 11. 接手顺序
+## 12. 接手顺序
 
 如果一个 OpenClaw Agent 接手这个仓库，建议顺序如下：
 
