@@ -8,9 +8,11 @@
 - Prototype proof：已完成
 - Live market/token data proof：已完成
 - Live portfolio proof：已完成
-- Real onchain execution proof：未完成
+- Real onchain execution：Roadmap（当前采用模拟路由闭环替代实盘签名，以保障演示安全与资金安全）
 
 ## 1. 项目概述
+
+**突破单点检测：支持真实多链钱包持仓暴露（Portfolio）的交叉验证，Scout 风险信号可直接映射到 Guardian 的持仓防守决策。**
 
 OKX RugShield 由两个核心 Skill 组成：
 
@@ -42,10 +44,12 @@ OKX RugShield 由两个核心 Skill 组成：
 - 当前 proof 说明见：`docs/LIVE_PROOF.md`
 - 当前证据台账见：`docs/EVIDENCE_LEDGER.md`
 
-## 展示链接（待补）
+## 展示与复现入口
 
-- X（推特）演示链接：待补
-- OKX 星球演示链接：待补
+![OpenClaw Guardian 告警演示占位图（提交前替换为真实 GIF/截图）](docs/assets/demo-guardian-alert.svg)
+
+- X（推特）演示链接：[待补充，提交前替换为真实帖文链接](https://x.com/)
+- 本地复现命令：`npm run demo` / `npm run replay:mock` / `npm run live:portfolio`
 
 ## 2. 当前已实现 / 当前不包含
 
@@ -71,6 +75,25 @@ OKX RugShield 由两个核心 Skill 组成：
 
 ## 3. 核心功能
 
+### 3.0 核心 System Prompt 摘要
+
+```text
+你是 RugShield 的双智能体系统：Scout + Guardian。
+
+[Scout 目标]
+1) 从 token/market/live signal 中识别 Rug 相关风险特征：
+   - 流动性骤降、成交异常、Dev 地址异常抛售、聪明钱快速撤出
+2) 生成结构化 Threat Report：
+   - risk_level, key_signals, confidence, affected_tokens, timestamp
+3) 若 risk_level >= HIGH，立即触发 Guardian。
+
+[Guardian 目标]
+1) 基于真实多链 wallet portfolio 检查用户暴露仓位。
+2) 按风险等级生成阶梯退出策略（先高风险仓位，后关联仓位）。
+3) 执行前必须做路由模拟和滑点/深度检查。
+4) Safe Mode 下要求 CONFIRM；Auto-Defense Mode 仅在高置信条件下自动响应。
+5) 输出必须可审计：包含触发原因、仓位清单、建议动作、执行条件。
+```
 ### 3.1 Scout Agent
 `rugshield-scout` 负责：
 - 扫描代币风险
@@ -101,6 +124,19 @@ OKX RugShield 由两个核心 Skill 组成：
 
 ## 4. 工作流程
 
+```text
+[OnchainOS Data] --> (Scout Agent) -- 识别 Rug 信号
+                           |
+                           v
+                    [Threat Report]
+                           |
+                           v
+[Wallet Portfolio] --> (Guardian Agent) -- 检查持仓暴露
+                           |
+                           v
+                 [退出策略 (Safe / Auto Mode)]
+```
+
 RugShield 的基本工作流程如下：
 
 1. Scout 发现高风险代币信号
@@ -112,6 +148,8 @@ RugShield 的基本工作流程如下：
 ## 5. 安装与接入
 
 ### 5.1 安装依赖
+
+前提环境：Node.js 18+（建议 Node.js 20 LTS），并确保 `node -v` 与 `npm -v` 可用。
 
 ```bash
 npm install
@@ -320,3 +358,7 @@ OKX-RugShield/
 4. 执行 `node scripts/installer.js --core-only`
 5. 配置 `.env`
 6. 在 OpenClaw 聊天环境中触发 Scout / Guardian
+
+
+
+
