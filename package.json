@@ -14,6 +14,7 @@
     "patrol:mock": "node cli/patrol-mock.js",
     "simulate:guardian": "node cli/simulate-guardian.js",
     "live:signal": "node cli/fetch-live-signal.js",
+    "live:portfolio": "node cli/live-portfolio-guardian.js",
     "test": "node cli/rugshield.js --mock && node cli/replay-mock.js && node cli/patrol-mock.js && node cli/simulate-guardian.js",
     "install:core": "node scripts/installer.js --core-only",
     "install:dry": "node scripts/installer.js --core-only --dry-run"
