@@ -12,7 +12,8 @@
     "demo": "node cli/rugshield.js --mock",
     "replay:mock": "node cli/replay-mock.js",
     "patrol:mock": "node cli/patrol-mock.js",
-    "test": "node cli/rugshield.js --mock && node cli/replay-mock.js && node cli/patrol-mock.js",
+    "simulate:guardian": "node cli/simulate-guardian.js",
+    "test": "node cli/rugshield.js --mock && node cli/replay-mock.js && node cli/patrol-mock.js && node cli/simulate-guardian.js",
     "install:core": "node scripts/installer.js --core-only",
     "install:dry": "node scripts/installer.js --core-only --dry-run"
   },

@@ -179,7 +179,9 @@ npm run patrol:mock
 ```text
 OKX-RugShield/
 ├── cli/
+│   ├── patrol-mock.js
 │   ├── replay-mock.js
+│   ├── simulate-guardian.js
 │   └── rugshield.js
 ├── lib/
 │   └── exit-strategy.js
