@@ -1,364 +1,265 @@
 # OKX RugShield 🛡️
 
-一个运行在 OpenClaw 生态内的聊天式双 Skill / 双智能体链上风控项目，用于在高风险代币出现 Rug 信号时，完成风险识别、持仓暴露检查、退出策略生成与模拟执行。
+[English](./README.md) | [简体中文](./README.champion-style.md)
 
-## 验证状态总览
+[![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-0f766e)](./package.json)
+[![OpenClaw Dual Skill](https://img.shields.io/badge/OpenClaw-dual%20skill-1d4ed8)](./SKILL.md)
+[![OKX Skills Based](https://img.shields.io/badge/OKX%20Skills-based-f59e0b)](./docs/AI_SETUP.md)
+[![Defense Workflow](https://img.shields.io/badge/focus-defense%20workflow-7c3aed)](./docs/GUARDIAN_PIPELINE.md)
+[![Demo + Live](https://img.shields.io/badge/mode-demo%20%7C%20live-2563eb)](./scripts/preflight.sh)
 
-- Mock proof：已完成
-- Prototype proof：已完成
-- Live market/token data proof：已完成
-- Live portfolio proof：已完成
-- Real onchain execution：Roadmap（当前采用模拟路由闭环替代实盘签名，以保障演示安全与资金安全）
+Built on OKX Skills, packaged as an onchain **defense workflow**.
 
-## 1. 项目概述
+Creator on X: [@your_handle_here](https://x.com/)
 
-**突破单点检测：支持真实多链钱包持仓暴露（Portfolio）的交叉验证，Scout 风险信号可直接映射到 Guardian 的持仓防守决策。**
+Quick links:
 
-OKX RugShield 由两个核心 Skill 组成：
+- [Chinese README](./README.champion-style.md)
+- [Skill Layer](./SKILL.md)
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Guardian Pipeline](./docs/GUARDIAN_PIPELINE.md)
+- [Live Proof](./docs/LIVE_PROOF.md)
+- [Evidence Ledger](./docs/EVIDENCE_LEDGER.md)
+- [Runbook](./docs/RUNBOOK.md)
+- [Benchmark Scenarios](./scenarios/demo-scenarios.v1.json)
 
-- `rugshield-scout`：负责市场侦察与风险识别
-- `rugshield-guardian`：负责持仓暴露检查、退出策略与模拟执行
+OKX RugShield is a local-first OpenClaw + OKX OnchainOS project that turns low-level token, market, and portfolio capabilities into a higher-level **rug-risk defense workflow**.
 
-项目依赖 OpenClaw 作为运行入口，依赖 OKX OnchainOS Skills 作为底层链上能力来源。
+OKX provides the primitive skills.
+RugShield packages them into a reusable safety pipeline that other agents or users can call to:
+- detect rug-related risk signals
+- verify wallet exposure
+- generate staged exit plans
+- produce auditable defense reports
 
-标准运行形态是：
-- 把 Skill 接入 OpenClaw
-- 在聊天界面中触发 Scout / Guardian
-- 通过对话完成风险分析与响应
-
-仓库中的 CLI 仅用于：
-- 本地预检
-- mock 演示
-- 没有完整 OpenClaw 环境时的兜底展示
-- 原型级链路验证
-
-## 模型与 Agent 配置说明
-
-- 本项目的标准运行入口是 **OpenClaw**。
-- Agent 结构采用双 Skill 形态：`rugshield-scout` + `rugshield-guardian`。
-- 当前项目的 Agent 行为定义主要承载于：
-  - `skills/rugshield-scout/SKILL.md`
-  - `skills/rugshield-guardian/SKILL.md`
-- 当前仓库中的本地脚本（如 `demo` / `replay:mock` / `patrol:mock` / `simulate:guardian` / `live:signal` / `live:portfolio`）用于原型验证，不代表仓库把底层大模型固定死在某一个单一提供商或单一版本上。
-- 更详细的 AI / Agent 配置说明见：`docs/AI_SETUP.md`
-- 当前 proof 说明见：`docs/LIVE_PROOF.md`
-- 当前证据台账见：`docs/EVIDENCE_LEDGER.md`
-
-## 展示与复现入口
-
-![OpenClaw Guardian 告警演示占位图（提交前替换为真实 GIF/截图）](docs/assets/demo-guardian-alert.svg)
-
-- X（推特）演示链接：[待补充，提交前替换为真实帖文链接](https://x.com/)
-- 本地复现命令：`npm run demo` / `npm run replay:mock` / `npm run live:portfolio`
-
-## 2. 当前已实现 / 当前不包含
-
-### 当前已实现
-- 基于 OpenClaw 的双 Skill 结构：`rugshield-scout` + `rugshield-guardian`
-- 基于规则与流程定义的风险识别、暴露检查、退出策略与模拟响应框架
-- `npm run demo` 本地 mock 演示
-- `npm run replay:mock` 基于 mock 输入的事件回放入口
-- `npm run patrol:mock` 主动巡检 / 主动告警原型入口
-- `npm run simulate:guardian` Guardian 闭环桥接原型入口
-- `npm run live:signal` 基于真实 OKX OnchainOS token/market 数据的原型入口
-- `npm run live:portfolio` 基于真实多链 wallet portfolio 的 Guardian 原型入口
-- `mock/mock-rug-event.json` 演示输入样例
-- `lib/exit-strategy.js` 动态退出比例计算模块（原型）
-- `lib/portfolio-filter.js` 真实持仓过滤模块（原型）
-- 外部 OKX OnchainOS Skills 的安装与本地 Skill 注入流程
-
-### 当前不包含或未完整实现
-- 完整实盘级自动执行程序
-- 基于真实钱包实时暴露与真实市场风险评分完全联动的闭环执行
-- Mempool / Pending Transaction 抢先防御
-- 完整自动化巡检调度框架
-
-## 3. 核心功能
-
-### 3.0 核心 System Prompt 摘要
-
-```text
-你是 RugShield 的双智能体系统：Scout + Guardian。
-
-[Scout 目标]
-1) 从 token/market/live signal 中识别 Rug 相关风险特征：
-   - 流动性骤降、成交异常、Dev 地址异常抛售、聪明钱快速撤出
-2) 生成结构化 Threat Report：
-   - risk_level, key_signals, confidence, affected_tokens, timestamp
-3) 若 risk_level >= HIGH，立即触发 Guardian。
-
-[Guardian 目标]
-1) 基于真实多链 wallet portfolio 检查用户暴露仓位。
-2) 按风险等级生成阶梯退出策略（先高风险仓位，后关联仓位）。
-3) 执行前必须做路由模拟和滑点/深度检查。
-4) Safe Mode 下要求 CONFIRM；Auto-Defense Mode 仅在高置信条件下自动响应。
-5) 输出必须可审计：包含触发原因、仓位清单、建议动作、执行条件。
-```
-### 3.1 Scout Agent
-`rugshield-scout` 负责：
-- 扫描代币风险
-- 识别 Dev 砸盘、聪明钱撤退、流动性恶化等信号
-- 输出结构化 `Threat Report`
-- 在演示场景下生成模拟风险事件
-- 在原型阶段支持主动巡检与主动告警入口
-
-### 3.2 Guardian Agent
-`rugshield-guardian` 负责：
-- 检查用户是否持有相关风险资产
-- 聚合多钱包持仓暴露
-- 生成阶梯式退出策略
-- 在执行前进行路由模拟
-- 根据模式决定请求确认或自动响应
-- 在原型阶段支持从 Threat Report 走到策略/路由规划的桥接模拟
-- 在原型阶段支持基于真实 wallet portfolio 的防守报告输出
-
-### 3.3 Mock / Demo / Prototype 能力
-项目提供：
-- `npm run demo`：本地 mock 演示
-- `npm run replay:mock`：读取 mock 事件并回放 Scout → Guardian 联动
-- `npm run patrol:mock`：模拟 Scout 主动巡检并交给 Guardian 生成防守建议
-- `npm run simulate:guardian`：模拟 Guardian 从 Threat Report 走到退出策略与路由规划
-- `npm run live:signal`：读取真实 OKX OnchainOS token/market 数据并生成原型级 Guardian 输出
-- `npm run live:portfolio`：读取真实 OKX OnchainOS wallet portfolio 数据并生成原型级 Guardian 防守报告
-- `mock/mock-rug-event.json`：最小可用的模拟事件输入样例
-
-## 4. 工作流程
-
-```text
-[OnchainOS Data] --> (Scout Agent) -- 识别 Rug 信号
-                           |
-                           v
-                    [Threat Report]
-                           |
-                           v
-[Wallet Portfolio] --> (Guardian Agent) -- 检查持仓暴露
-                           |
-                           v
-                 [退出策略 (Safe / Auto Mode)]
+```mermaid
+flowchart LR
+  A[Token / Market / Onchain Signals] --> B[Scout]
+  B --> C[Threat Report]
+  C --> D[Guardian]
+  E[Wallet Portfolio] --> D
+  D --> F[Exposure Check]
+  F --> G[Staged Defense Plan]
+  G --> H[Simulation / Conditional Action]
 ```
 
-RugShield 的基本工作流程如下：
+The product structure is explicit:
 
-1. Scout 发现高风险代币信号
-2. Scout 输出结构化 `Threat Report`
-3. Guardian 检查用户真实持仓暴露
-4. Guardian 结合风险等级、流动性深度、滑点与模式配置生成退出方案
-5. 在 `Safe Mode` 下请求 `CONFIRM`，或在满足条件时执行自动响应
+- **signal layer**: identify suspicious token behavior and convert it into a structured Threat Report
+- **defense layer**: map that threat to real wallet exposure and prioritize what needs attention first
+- **response layer**: turn the situation into a staged, auditable defensive plan instead of vague warnings
 
-## 5. 安装与接入
+RugShield is not trying to replace stronger reasoning models, market analysis tools, or the official OKX primitive skills.
+It is the **defense and control layer** they can call when they want to translate danger signals into wallet-aware action plans.
 
-### 5.1 安装依赖
+---
 
-前提环境：Node.js 18+（建议 Node.js 20 LTS），并确保 `node -v` 与 `npm -v` 可用。
+## Why It Is Reusable
+
+RugShield is reusable in two ways:
+
+### 1. User mode
+A user asks:
+- “这个币有没有 rug 风险？”
+- “我钱包里有没有暴露？”
+- “先减哪个仓位？”
+
+RugShield converts those questions into a repeatable defense workflow.
+
+### 2. Agent mode
+Another AI or workflow can reuse the same pipeline:
+- scout risk
+- generate Threat Report
+- call guardian
+- return a machine-readable defense plan
+
+That is the real replication story:
+
+- OKX Skills stay at the primitive layer
+- RugShield stays at the workflow layer
+- downstream agents reuse the defense workflow without rebuilding the full risk pipeline each time
+
+---
+
+## For Demo vs. For Live Usage
+
+### Demo Mode
+Demo mode is designed for judges, reviewers, and users who do not yet have the full OKX dependency stack.
+
+It supports:
+- mock risk scans
+- mock event replay
+- guardian simulation
+- manual analysis mode
+
+This keeps the project evaluable even when official upstream skills or credentials are not yet installed.
+
+### Live Mode
+Live mode enables:
+- live token / market signal checks
+- live wallet portfolio checks
+- stronger guardian response flows
+
+Live mode depends on:
+- official OKX / OnchainOS skills
+- OKX credentials
+- a correct local runtime environment
+
+So the dependency policy is deliberate:
+
+> detect first, warn clearly, degrade gracefully, and only claim live capability when the environment truly supports it.
+
+---
+
+## What It Does
+
+- **detect rug risk**: identify liquidity drops, abnormal volume, dev sell pressure, smart-money exits, and similar signals
+- **generate Threat Report**: convert raw findings into a structured object with risk level, confidence, and next action
+- **check wallet exposure**: inspect whether risky tokens or related assets exist in the target wallet portfolio
+- **build staged exit plans**: prioritize direct exposure first and return a sequence of defensive actions
+- **simulate response**: provide an auditable simulated plan when real execution should not happen
+- **support OpenClaw skills**: split the workflow into `rugshield-scout` and `rugshield-guardian`
+
+---
+
+## Quick Start
 
 ```bash
 npm install
-```
-
-### 5.2 创建环境文件
-
-```bash
 cp .env.example .env
-```
-
-填写：
-- `OKX_API_KEY`
-- `OKX_API_SECRET`
-- `OKX_API_PASSPHRASE`
-- `AUTO_DEFENSE_MODE`
-
-### 5.3 安装 OpenClaw 所需技能
-
-```bash
-npm run install:core
-# 或
-node scripts/installer.js --core-only
-```
-
-安装脚本会：
-- 安装 7 个必需的 OKX OnchainOS Skills
-- 把 `rugshield-scout` 与 `rugshield-guardian` 复制到 `~/.openclaw/workspace/skills/`
-- 运行预检
-
-## 6. 使用方式
-
-### 6.1 OpenClaw 标准入口
-推荐在 OpenClaw 聊天界面中直接触发，例如：
-
-- `运行 场景1：午夜土狗闪崩 模拟演示`
-- `执行全仓体检`
-- `开始主动巡检并在发现高风险时提醒我`
-- `Guardian Agent，检查最新 Threat Report 并告诉我当前持仓暴露`
-
-### 6.2 CLI 原型入口
-如果暂时没有完整 OpenClaw 环境，可运行：
-
-```bash
+npm run preflight
 npm run demo
 npm run replay:mock
 npm run patrol:mock
 npm run simulate:guardian
+npm run benchmark:verbose
+```
+
+Optional live prototype examples:
+
+```bash
 npm run live:signal -- OKB xlayer
 npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 1
 ```
 
-这些命令用于 mock / 原型验证，不代表真实链上自动执行。
-
-## 7. 运行模式
-
-### Safe Mode
-默认模式。
-执行前需要人工确认。
-
-### Auto-Defense Mode
-当 `AUTO_DEFENSE_MODE=true` 时，Guardian 可以在高危场景下自动处理。
-
-是否能够真正自动执行，取决于：
-- 当前 OpenClaw 环境是否已正确安装相关 OKX OnchainOS Skills
-- 是否配置了执行权限
-- 是否具备真实链上调用能力
-
-## 8. 原型与测试入口
-
-### 8.1 本地 mock 演示
+Before a public demo or judging run, execute:
 
 ```bash
+npm run preflight
+```
+
+This checks:
+- runtime readiness
+- project structure
+- local skill installation
+- official OKX dependency visibility
+- environment variables
+- demo vs live readiness
+
+---
+
+## Local OpenClaw Skill Installation
+
+RugShield ships as two local-first skills:
+
+- `rugshield-scout`
+- `rugshield-guardian`
+
+Install locally:
+
+```bash
+bash skills/rugshield-scout/scripts/install-local.sh
+bash skills/rugshield-guardian/scripts/install-local.sh
+```
+
+Default install path:
+
+```bash
+~/.openclaw/workspace/skills/
+```
+
+If needed:
+
+```bash
+export RUGSHIELD_PROJECT_DIR=/path/to/OKX-RugShield
+```
+
+---
+
+## Reproducibility
+
+RugShield includes or recommends:
+
+- `scripts/preflight.sh`
+- `scripts/benchmark-runner.js`
+- `scenarios/demo-scenarios.v1.json`
+- mock replay flows
+- live prototype entry points
+
+Suggested judging commands:
+
+```bash
+npm install
+npm run preflight
 npm run demo
-```
-
-### 8.2 Mock 回放
-
-```bash
 npm run replay:mock
-```
-
-该命令会读取 `mock/mock-rug-event.json`，并输出一次基于 mock 输入的 Scout → Guardian 联动回放。
-
-### 8.3 主动巡检原型
-
-```bash
-npm run patrol:mock
-```
-
-该命令会模拟 Scout 主动巡检高风险资产、主动发出 Threat Report，并由 Guardian 在用户尚未先发起交易的情况下生成防守建议。
-
-### 8.4 Guardian 闭环模拟
-
-```bash
 npm run simulate:guardian
+npm run benchmark:verbose
 ```
 
-该命令会读取 Threat Report / mock 事件输入，调用 `lib/exit-strategy.js`，并输出更接近真实 Guardian pipeline 的桥接报告。
-
-### 8.5 真实链上数据原型
+If official OKX dependencies are already configured:
 
 ```bash
 npm run live:signal -- OKB xlayer
-```
-
-该命令会调用真实的 `okx-dex-token` / `okx-dex-market` 数据，并生成原型级 Guardian 策略输出。
-
-### 8.6 真实 Portfolio Guardian 原型
-
-```bash
 npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 1
 ```
 
-该命令会读取真实多链 wallet portfolio，过滤噪音资产，并输出面向 Guardian 的防守报告。
+---
 
-### 8.7 Mock 测试包
+## Output Boundaries
 
-仓库内提供：
+### Already implemented
+- dual-skill structure: Scout + Guardian
+- Threat Report generation
+- mock / replay / patrol flows
+- live signal prototype
+- live portfolio prototype
+- staged defense strategy prototype
+- preflight and benchmark framework
 
-- `mock/mock-rug-event.json`
+### Not fully implemented yet
+- production-grade automatic execution
+- full real-money autonomous defense loop
+- mempool / pending transaction preemptive defense
+- full autonomous patrol scheduler
 
-该文件包含：
-- 模拟高危 Rug 事件
-- 模拟多钱包持仓暴露
-- 模拟流动性深度下降
-- 模拟动态退出建议
+So the project should be evaluated accurately as:
 
-它用于帮助开发者和评审快速理解项目的风险输入与策略输出结构。
+> a demonstrable, testable, extensible onchain defense prototype
 
-## 9. 仓库结构
+---
 
-```text
-OKX-RugShield/
-├── cli/
-│   ├── fetch-live-signal.js
-│   ├── live-portfolio-guardian.js
-│   ├── patrol-mock.js
-│   ├── replay-mock.js
-│   ├── simulate-guardian.js
-│   └── rugshield.js
-├── lib/
-│   ├── exit-strategy.js
-│   └── portfolio-filter.js
-├── scripts/
-│   └── installer.js
-├── skills/
-│   ├── rugshield-scout/SKILL.md
-│   └── rugshield-guardian/SKILL.md
-├── docs/
-│   ├── ACTIVE_DEFENSE.md
-│   ├── AI_SETUP.md
-│   ├── ARCHITECTURE.md
-│   ├── EVIDENCE_LEDGER.md
-│   ├── GUARDIAN_PIPELINE.md
-│   ├── INTEGRATION_MATRIX.md
-│   ├── LIVE_DATA_PROTOTYPE.md
-│   ├── LIVE_PORTFOLIO_GUARDIAN.md
-│   ├── LIVE_PROOF.md
-│   ├── PROACTIVE_PATROL.md
-│   ├── PRODUCTION_CHECKLIST.md
-│   └── RUNBOOK.md
-├── mock/
-│   ├── mock-rug-event.json
-│   └── README.md
-├── .env.example
-├── docker-compose.yml
-├── package.json
-└── README.md
-```
+## Why It Matters
 
-## 10. 当前限制
+Most onchain AI products help users find the next opportunity.
+RugShield focuses on what users fear more:
 
-当前版本的边界如下：
+- hidden exposure
+- rapidly worsening token risk
+- not knowing what to reduce first
+- acting too late
 
-- 项目的主形态是 OpenClaw Skill，不是独立量化交易系统
-- `npm run demo`、`npm run replay:mock`、`npm run patrol:mock`、`npm run simulate:guardian`、`npm run live:signal`、`npm run live:portfolio` 都属于原型验证入口，不是实盘执行证明
-- `mock/mock-rug-event.json` 是演示输入样例，不是完整自动回放框架
-- Mempool 抢先防御、多钱包并发执行、更加精细的深度计算，当前主要属于增强方向
+RugShield pushes onchain AI one step closer to a safety-native workflow:
 
-## 11. 后续规划
+> detect risk early, map it to real holdings, and return a usable defense response before the loss expands.
 
-后续增强方向包括：
+---
 
-- 动态最优解退出：结合真实池子深度、滑点阈值与可回收率计算退出比例
-- Mempool / Pending Transaction 级提前响应
-- 多钱包并发路由模拟与并发执行
-- 更完整的 mock 回放与测试流
-- 更接近真实后台守护的主动巡检调度机制
-- 与 AA 钱包 / 账户抽象执行策略层更深结合
+## Roadmap
 
-## 12. 安全提示
-
-- 请优先在模拟盘、测试环境、子账户或小资金环境中体验本项目。
-- 不要向 Agent 提供私钥、助记词、API Secret 或其他敏感凭证。
-- 请优先使用官方提供或认可的 Skills，并谨慎启用第三方扩展能力。
-- 当前仓库中的 mock / 原型能力不应被视为主钱包实盘自动执行工具。
-
-## 13. 接手顺序
-
-如果一个 OpenClaw Agent 接手这个仓库，建议顺序如下：
-
-1. 阅读 `skills/rugshield-scout/SKILL.md`
-2. 阅读 `skills/rugshield-guardian/SKILL.md`
-3. 执行 `npm install`
-4. 执行 `node scripts/installer.js --core-only`
-5. 配置 `.env`
-6. 在 OpenClaw 聊天环境中触发 Scout / Guardian
-
-
-
-
+- add stricter executable benchmark validation
+- strengthen machine-readable report schemas
+- improve official OKX dependency detection
+- add screenshots, GIFs, and X demo links
+- improve live-mode operational guidance
+- extend the defense loop under explicit safety and authorization controls

@@ -1,101 +1,71 @@
 ---
 name: rugshield-scout
-description: 侦测链上代币风险、Dev 砸盘、聪明钱撤退、流动性恶化与潜在 Rug 信号，并输出结构化 Threat Report。用于用户要求扫描代币、评估 Rug 风险、监控高风险资产、执行哨兵巡检，或为 Guardian 提供上游威胁情报时。
+description: Detect rug-pull and onchain token risk signals, generate structured Threat Reports, and support mock or live token risk inspection with a RugShield-style workflow. Use when the user asks to scan a token, inspect abnormal liquidity or volume, analyze dev dumping or smart-money exits, run proactive patrols, replay mock rug events, or create a threat report for a token, wallet context, or chain.
 ---
 
 # RugShield Scout
 
-你是 RugShield 的市场侦察官，只负责**发现风险并输出结构化情报**。
+Inspect token risk and output a structured Threat Report.
 
-## 基本原则
+## Workflow
 
-- 只做侦察，不做交易执行。
-- 优先输出结构化结论，不要堆砌长篇描述。
-- 如果证据不足，明确说明“不足以下结论”。
-- 如果风险达到 `WARNING` 或 `CRITICAL`，把结果交给 Guardian，而不是自行处理钱包或 swap。
+1. Parse the target token, chain, and desired mode from the request.
+2. Choose the lightest mode that satisfies the request:
+   - mock event replay for demos or testing
+   - patrol mock for proactive alert simulation
+   - live signal fetch for real token or market context
+3. Evaluate the strongest available signals:
+   - liquidity drop
+   - abnormal volume or price behavior
+   - dev wallet sell pressure
+   - smart-money exit
+   - concentration or holder-distribution anomalies
+4. Classify risk as `LOW`, `MEDIUM`, `HIGH`, or `CRITICAL`.
+5. Produce a Threat Report.
+6. If risk is `HIGH` or above, recommend handing off to `rugshield-guardian`.
 
-## 可用能力
+## Output contract
 
-优先结合这些 OKX OnchainOS skills：
+Always include:
 
-- `okx-dex-token`
-- `okx-dex-market`
-- `okx-dex-signal`
-- `okx-dex-trenches`
+- token
+- chain
+- risk_level
+- confidence
+- key_signals
+- brief_reasoning
+- affected_tokens
+- timestamp
+- recommended_next_action
 
-## 风险评分维度
+Prefer JSON when the user asks for machine-readable output. Otherwise provide a short Chinese summary followed by a structured block.
 
-对可疑代币按 0-100 进行综合评分，可参考以下维度：
+## Execution
 
-- `Price Risk`
-- `Liquidity Risk`
-- `Smart Money Exit Risk`
-- `Dev Risk`
-- `Holder Structure Risk`
-- `Volatility Risk`
-- `Execution Friction Risk`
+Use bundled scripts for deterministic runs:
 
-## 风险等级
+- `scripts/run-scout.sh mock` → mock demo
+- `scripts/run-scout.sh patrol-mock` → proactive patrol simulation
+- `scripts/run-scout.sh live <token> <chain>` → live token signal fetch
+- `scripts/run-scout.sh replay <path-to-mock-event.json>` → replay a saved event
 
-- `SAFE`: 0-30
-- `WATCH`: 31-60
-- `WARNING`: 61-84
-- `CRITICAL`: 85-100
+The script expects either:
 
-## 工作方式
+- `RUGSHIELD_PROJECT_DIR` to point at the OKX-RugShield repo, or
+- a sibling checkout discoverable from the current working directory.
 
-### 1. 单资产扫描
-当用户要求扫描某个代币、合约地址或高风险资产时：
+If the project repo or dependencies are unavailable, fall back to manual analysis and clearly mark the result as non-executed.
 
-1. 收集代币结构、价格、流动性、聪明钱、trench 风险等信息。
-2. 给出简洁结论：风险等级、核心原因、是否建议交给 Guardian。
-3. 若等级达到 `WARNING` 或 `CRITICAL`，必须输出标准 Threat Report。
+## References
 
-### 2. 哨兵巡检
-当用户要求“巡检”“哨兵模式”“持续监控”时：
+Read these only when needed:
 
-- 默认理解为：定期扫描用户关注资产或高波动资产。
-- 如果当前环境不支持真实后台循环，就明确说明你将按“每轮检查一次”的方式执行，不伪装成真的后台常驻服务。
-- 一旦发现 `WARNING` / `CRITICAL`，立即输出 Threat Report，并建议交给 Guardian。
+- `references/risk-signals.md` for signal definitions and grading heuristics
+- `references/threat-report-schema.md` for the Threat Report structure
+- `references/local-install.md` for local install and dependency strategy
 
-### 3. Hackathon 模拟演示
-如果用户要求：
+## Guardrails
 
-- `运行 场景1：午夜土狗闪崩 模拟演示`
-- 或其他明确的比赛演示/模拟指令
-
-则允许直接输出一份**模拟 Threat Report**，不必发起真实链上查询。
-
-默认模拟情景：
-- 代币：`0xPepeDump`
-- 结论：Dev 大额砸盘、聪明钱快速撤退
-- 分数：95
-- 等级：`CRITICAL`
-
-## 输出要求
-
-### 普通扫描输出
-尽量简洁，至少包含：
-
-- 风险等级
-- 风险分数
-- 2-4 个关键原因
-- 是否建议交给 Guardian
-
-### 标准 Threat Report
-当风险等级达到 `WARNING` 或 `CRITICAL` 时，输出以下 JSON：
-
-```json
-{
-  "source": "RugShield-Scout",
-  "threat_level": "WARNING | CRITICAL",
-  "rugged_score": 88,
-  "token_address": "0x...",
-  "chain": "ethereum/solana/base",
-  "reason": "Smart money net outflow exceeded 50% in 15min / Dev wallet dumped 10% / Extreme slippage detected."
-}
-```
-
-然后补一句简短说明：
-
-> 已识别高风险信号，建议交由 Guardian 检查真实持仓暴露与逃生路径。
+- Do not claim live onchain verification unless the script actually ran successfully.
+- Do not present a signal-only scan as portfolio defense; hand off to `rugshield-guardian` for exposure checks.
+- Treat execution and trading language conservatively; this skill is for detection and reporting.

@@ -1,56 +1,8 @@
 {
-  "source": "mock-rug-event",
-  "scenario": "midnight-meme-dump",
-  "token": {
-    "symbol": "PEPEDUMP",
-    "address": "0xPepeDump...",
-    "chain": "x-layer"
-  },
-  "threat": {
-    "threat_level": "CRITICAL",
-    "rugged_score": 95,
-    "reason": [
-      "Dev wallet removed 52% liquidity",
-      "Smart money net outflow exceeded 78% in 10min",
-      "Execution slippage deteriorated sharply"
-    ]
-  },
-  "liquidity": {
-    "pool_usd_before": 920000,
-    "pool_usd_after": 410000,
-    "safe_exit_slippage_bps": 1000,
-    "max_safe_exit_ratio": 0.3,
-    "note": "Pool depth can safely absorb only ~30% of the current position under 10% slippage"
-  },
-  "portfolio": {
-    "wallets": [
-      {
-        "label": "Meme Wallet 1",
-        "address": "0xMeme111...",
-        "token_amount": 22000,
-        "token_value_usd": 21000
-      },
-      {
-        "label": "Meme Wallet 2",
-        "address": "0xMeme222...",
-        "token_amount": 18000,
-        "token_value_usd": 17000
-      },
-      {
-        "label": "Airdrop Wallet 3",
-        "address": "0xAir333...",
-        "token_amount": 10000,
-        "token_value_usd": 7000
-      }
-    ],
-    "total_token_amount": 50000,
-    "total_value_usd": 45000
-  },
-  "recommended_action": {
-    "strategy": "dynamic-partial-exit",
-    "safe_exit_ratio": 0.3,
-    "safe_exit_target": "USDC",
-    "remaining_position_action": "hold-and-monitor",
-    "summary": "Sell only the safest 30% tranche first to recover principal and avoid catastrophic slippage on the remaining 70%."
-  }
+  "token": "OKB",
+  "chain": "xlayer",
+  "risk_level": "HIGH",
+  "confidence": "medium",
+  "key_signals": ["liquidity_drop", "smart_money_exit"],
+  "brief_reasoning": "Liquidity weakened while tracked wallets reduced exposure."
 }

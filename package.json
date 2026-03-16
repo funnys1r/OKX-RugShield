@@ -1,21 +1,25 @@
 {
   "name": "okx-rugshield",
   "version": "1.0.0",
-  "description": "OKX RugShield - A Multi-Wallet Onchain Risk Defense & Escape Agent Powered by OKX OnchainOS Skills",
+  "description": "OKX RugShield - A dual-skill onchain risk defense agent for threat detection, wallet exposure checks, and staged defensive responses",
   "main": "cli/rugshield.js",
   "bin": {
     "rugshield": "./cli/rugshield.js"
   },
   "scripts": {
     "start": "node cli/rugshield.js",
-    "preflight": "node cli/rugshield.js",
+    "preflight": "bash scripts/preflight.sh",
+    "preflight:verbose": "bash -x scripts/preflight.sh",
     "demo": "node cli/rugshield.js --mock",
     "replay:mock": "node cli/replay-mock.js",
     "patrol:mock": "node cli/patrol-mock.js",
     "simulate:guardian": "node cli/simulate-guardian.js",
     "live:signal": "node cli/fetch-live-signal.js",
     "live:portfolio": "node cli/live-portfolio-guardian.js",
-    "test": "node cli/rugshield.js --mock && node cli/replay-mock.js && node cli/patrol-mock.js && node cli/simulate-guardian.js",
+    "benchmark": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json",
+    "benchmark:strict": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json --strict",
+    "benchmark:verbose": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json --verbose",
+    "test": "npm run preflight && npm run demo && npm run replay:mock && npm run patrol:mock && npm run simulate:guardian",
     "install:core": "node scripts/installer.js --core-only",
     "install:dry": "node scripts/installer.js --core-only --dry-run"
   },
@@ -24,9 +28,10 @@
     "onchainos",
     "openclaw",
     "rugshield",
-    "defi",
+    "defense-agent",
     "risk-management",
-    "smart-wallet"
+    "wallet-security",
+    "defi"
   ],
   "author": "CTO-CT-SF",
   "license": "MIT",

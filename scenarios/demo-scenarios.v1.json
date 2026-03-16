@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "name": "okx-rugshield-demo-scenarios",
+  "description": "Demo and judging scenarios for OKX RugShield. Covers scout detection, guardian defense, dependency downgrade behavior, and auditable outputs.",
+  "scenarios": [
+    {
+      "id": "scout-mock-rug-event",
+      "title": "Scout detects a high-risk mock rug event",
+      "mode": "demo",
+      "component": "rugshield-scout",
+      "input": {
+        "request": "回放一个 mock 风险事件并输出 Threat Report",
+        "command": "npm run replay:mock"
+      },
+      "expected": {
+        "must_include": [
+          "risk_level",
+          "confidence",
+          "key_signals",
+          "recommended_next_action"
+        ],
+        "accepts_modes": ["mock", "analysis"],
+        "success_condition": "A structured Threat Report is produced and recommends guardian follow-up when risk is high."
+      }
+    },
+    {
+      "id": "scout-live-signal-okb-xlayer",
+      "title": "Scout performs live signal check for OKB on xlayer",
+      "mode": "live-optional",
+      "component": "rugshield-scout",
+      "input": {
+        "request": "扫描 OKB 在 xlayer 上的风险信号",
+        "command": "npm run live:signal -- OKB xlayer"
+      },
+      "expected": {
+        "must_include": [
+          "token",
+          "chain",
+          "risk_level"
+        ],
+        "fallback_allowed": true,
+        "fallback_behavior": "If official OKX skills or credentials are missing, explain that live mode is unavailable and downgrade to manual or mock analysis."
+      }
+    },
+    {
+      "id": "guardian-simulated-defense",
+      "title": "Guardian creates a simulated staged exit plan",
+      "mode": "demo",
+      "component": "rugshield-guardian",
+      "input": {
+        "request": "根据 Threat Report 给我一个防守退出方案",
+        "command": "npm run simulate:guardian"
+      },
+      "expected": {
+        "must_include": [
+          "threat_summary",
+          "exposed_positions",
+          "staged_exit_plan",
+          "confirmation_requirement"
+        ],
+        "accepts_modes": ["simulation", "analysis"],
+        "success_condition": "Guardian outputs an auditable defense plan with staged actions and explicit execution conditions."
+      }
+    },
+    {
+      "id": "guardian-live-portfolio",
+      "title": "Guardian checks real portfolio exposure when dependencies exist",
+      "mode": "live-optional",
+      "component": "rugshield-guardian",
+      "input": {
+        "request": "检查这个地址的多链风险暴露",
+        "command": "npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 1"
+      },
+      "expected": {
+        "must_include": [
+          "wallets_checked",
+          "chains_checked",
+          "execution_condition"
+        ],
+        "fallback_allowed": true,
+        "fallback_behavior": "If live dependencies are unavailable, return a manual analysis template and clearly mark live portfolio check as not executed."
+      }
+    },
+    {
+      "id": "dependency-downgrade-behavior",
+      "title": "System degrades gracefully when OKX upstream skills are missing",
+      "mode": "judge-safety",
+      "component": "system",
+      "input": {
+        "request": "在没有官方 OKX skills 的环境下运行 preflight 并继续 demo",
+        "command": "npm run preflight && npm run demo"
+      },
+      "expected": {
+        "must_include": [
+          "Demo mode",
+          "Live mode"
+        ],
+        "success_condition": "Preflight warns about missing upstream dependencies but the project remains demo-capable instead of hard-failing for all use cases."
+      }
+    }
+  ]
+}
