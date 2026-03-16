@@ -152,7 +152,15 @@ npm run replay:mock
 
 该命令会读取 `mock/mock-rug-event.json`，并输出一次基于 mock 输入的 Scout → Guardian 联动回放。
 
-### 8.3 Mock 测试包
+### 8.3 主动巡检原型
+
+```bash
+npm run patrol:mock
+```
+
+该命令会模拟 Scout 主动巡检高风险资产、主动发出 Threat Report，并由 Guardian 在用户尚未先发起交易的情况下生成防守建议。
+
+### 8.4 Mock 测试包
 
 仓库内提供：
 
