@@ -17,9 +17,10 @@ RugShield 现在建议按 **Scout / Guardian / Watcher** 三层来理解：
 1. 安装官方 OKX / OnchainOS skills
 2. 安装 `rugshield-scout`
 3. 安装 `rugshield-guardian`
-4. 如果需要 live 能力，配置 OKX 凭证
-5. 在 OpenClaw 中直接通过自然语言调用
-6. 如需定时巡检，再启用 Watcher 层
+4. 安装 `rugshield-watch`
+5. 如果需要 live 能力，配置 OKX 凭证
+6. 在 OpenClaw 中直接通过自然语言调用
+7. 如需定时巡检，再启用 Watcher 层
 
 ### 两种入口不要混淆
 
@@ -67,12 +68,14 @@ node scripts/installer.js --core-only
 会安装：
 - `rugshield-scout`
 - `rugshield-guardian`
+- `rugshield-watch`
 
 ### 方式 B：手动安装
 
 ```bash
 bash skills/rugshield-scout/scripts/install-local.sh
 bash skills/rugshield-guardian/scripts/install-local.sh
+bash skills/rugshield-watch/scripts/install-local.sh
 ```
 
 ---

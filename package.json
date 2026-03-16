@@ -22,7 +22,8 @@
     "benchmark:verbose": "node scripts/benchmark-runner.js --scenarios=./scenarios/demo-scenarios.v1.json --verbose",
     "test": "npm run preflight && npm run demo && npm run replay:mock && npm run patrol:mock && npm run simulate:guardian",
     "install:core": "node scripts/installer.js --core-only",
-    "install:dry": "node scripts/installer.js --core-only --dry-run"
+    "install:dry": "node scripts/installer.js --core-only --dry-run",
+    "skill:watch:summary": "bash skills/rugshield-watch/scripts/run-watch.sh summary-default"
   },
   "keywords": [
     "okx",

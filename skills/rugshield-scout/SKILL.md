@@ -1,6 +1,6 @@
 ---
 name: rugshield-scout
-description: Detect rug-pull and onchain token risk signals, generate structured Threat Reports, and support mock or live token risk inspection with a RugShield-style workflow. Use when the user asks to scan a token, inspect abnormal liquidity or volume, analyze dev dumping or smart-money exits, run proactive patrols, replay mock rug events, or create a threat report for a token, wallet context, or chain.
+description: Detect rug-pull and onchain token risk signals, generate structured Threat Reports, and support mock or live token risk inspection with a RugShield-style workflow. Use when the user says things like “看下这个币有没有 rug 风险”, “分析这个 token”, “这个币安全吗”, “有没有 Dev 砸盘”, “聪明钱是不是撤了”, “流动性是不是出问题了”, “帮我扫一下这个币”, “输出 Threat Report”, or asks to scan a token, inspect abnormal liquidity or volume, analyze dev dumping or smart-money exits, run proactive patrols, replay mock rug events, or create a threat report for a token, wallet context, or chain.
 ---
 
 # RugShield Scout

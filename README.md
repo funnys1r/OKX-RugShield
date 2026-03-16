@@ -69,6 +69,7 @@ Watcher is the monitoring layer for scheduled use:
 - compares current scan results to previous state
 - surfaces only new or worsening risk
 - provides the proactive monitoring entry point for OpenClaw automation
+- now has a dedicated `rugshield-watch` skill entry for natural-language patrol intent
 
 ## Demo vs Live
 

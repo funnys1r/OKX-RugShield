@@ -8,7 +8,7 @@ const dryRun = args.includes('--dry-run');
 const coreOnly = args.includes('--core-only');
 const repoRoot = path.resolve(__dirname, '..');
 const workspaceSkillsDir = process.env.OPENCLAW_SKILLS_DIR || path.join(os.homedir(), '.openclaw', 'workspace', 'skills');
-const skillsToInstall = ['rugshield-scout', 'rugshield-guardian'];
+const skillsToInstall = ['rugshield-scout', 'rugshield-guardian', 'rugshield-watch'];
 const officialRepo = 'https://github.com/okx/onchainos-skills';
 const officialInstall = 'npx skills add okx/onchainos-skills';
 

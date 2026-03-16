@@ -1,6 +1,6 @@
 ---
 name: rugshield-guardian
-description: Analyze wallet exposure against a rug-risk Threat Report, generate staged defensive exit plans, and simulate protective onchain responses with a RugShield-style workflow. Use when the user asks to inspect wallet or portfolio exposure, check risky positions across chains, create a defensive sell or exit plan, simulate guardian actions, or respond to a high-risk token alert.
+description: Analyze wallet exposure against a rug-risk Threat Report, generate staged defensive exit plans, and simulate protective onchain responses with a RugShield-style workflow. Use when the user says things like “检查这个钱包有没有 rug 风险”, “查一下这个地址”, “看看这个钱包有没有中招”, “有没有高风险仓位”, “给我一个防守报告”, “根据 Threat Report 给我退出方案”, “帮我看下暴露情况”, or asks to inspect wallet or portfolio exposure, check risky positions across chains, create a defensive sell or exit plan, simulate guardian actions, or respond to a high-risk token alert.
 ---
 
 # RugShield Guardian

@@ -27,7 +27,7 @@ Responsible for:
 - generating defense reports from real wallet portfolio data during the prototype stage
 
 ## 3. Watcher / Patrol Layer
-Repository runtime layer for scheduled monitoring.
+`skills/rugshield-watch/` + repository runtime layer for scheduled monitoring.
 
 Responsible for:
 - scanning multiple wallets on a schedule
@@ -35,6 +35,7 @@ Responsible for:
 - comparing current results to previous scans
 - surfacing only new or worsening risk
 - acting as the proactive monitoring entry point for OpenClaw automation
+- bridging natural language like “马上检查一次 / 按默认方案开 / 帮我盯着这个钱包” into watcher actions
 
 ## Integration Notes
 
