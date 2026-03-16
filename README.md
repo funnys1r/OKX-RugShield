@@ -13,6 +13,7 @@ Built on OKX Skills, packaged as an onchain **defense workflow**.
 Quick links:
 
 - [Skill Layer](./SKILL.md)
+- [OpenClaw 安装即用](./docs/OPENCLAW_USAGE.md)
 - [Architecture](./docs/ARCHITECTURE.md)
 - [Guardian Pipeline](./docs/GUARDIAN_PIPELINE.md)
 - [Live Proof](./docs/LIVE_PROOF.md)
@@ -39,6 +40,29 @@ flowchart LR
   F --> G[Staged Defense Plan]
   G --> H[Simulation / Conditional Action]
 ```
+
+## 最重要：OpenClaw 用户如何使用
+
+如果你是 **OpenClaw 用户**，主路径不是手动跑 npm 命令，而是：
+
+1. 安装官方 OKX / OnchainOS skills（如果你要 live 能力）
+2. 安装 `rugshield-scout` 和 `rugshield-guardian`
+3. 直接在 OpenClaw 对话中触发
+
+### 安装后可直接说
+
+#### Scout 场景
+- `扫描 OKB 在 xlayer 上有没有 rug 风险`
+- `回放一个 mock 风险事件并输出 Threat Report`
+- `开始主动巡检高风险 token`
+
+#### Guardian 场景
+- `检查我这个地址有没有暴露在高风险 token 上`
+- `根据 Threat Report 给我一个退出方案`
+- `用 Safe Mode 输出一个防守建议`
+
+详细安装和使用说明见：
+- [docs/OPENCLAW_USAGE.md](./docs/OPENCLAW_USAGE.md)
 
 ## Product Structure
 
@@ -86,7 +110,33 @@ Dependency policy:
 - **simulate response**: provide an auditable simulated plan when real execution should not happen
 - **support OpenClaw skills**: split the workflow into `rugshield-scout` and `rugshield-guardian`
 
-## Quick Start
+## For OpenClaw Users
+
+### Step 1: install local RugShield skills
+
+```bash
+node scripts/installer.js --core-only
+```
+
+或手动安装：
+
+```bash
+bash skills/rugshield-scout/scripts/install-local.sh
+bash skills/rugshield-guardian/scripts/install-local.sh
+```
+
+### Step 2: install official OKX / OnchainOS skills if you want live mode
+
+如果你只想演示或 mock 使用，RugShield 可以先跑在 Demo Mode。
+如果你要启用更完整的 live token / portfolio 能力，需要先准备官方上游 skills 和相应环境。
+
+### Step 3: talk to OpenClaw directly
+
+安装完成后，直接在 OpenClaw 中用自然语言触发，不需要先跑仓库命令。
+
+## For Judges and Developers
+
+如果你是评委、开发者、或想在没有完整 OpenClaw 环境时做本地验证，可以使用仓库命令入口：
 
 ```bash
 npm install
@@ -106,32 +156,6 @@ npm run live:signal -- OKB xlayer
 npm run live:portfolio -- 0x58e79a0c44e9bf71152bd2e51fea4c88b8a05097 xlayer,ethereum,base,arbitrum,bsc 1
 ```
 
-## Local OpenClaw Skill Installation
-
-RugShield ships as two local-first skills:
-
-- `rugshield-scout`
-- `rugshield-guardian`
-
-Install locally:
-
-```bash
-bash skills/rugshield-scout/scripts/install-local.sh
-bash skills/rugshield-guardian/scripts/install-local.sh
-```
-
-Default install path:
-
-```bash
-~/.openclaw/workspace/skills/
-```
-
-If needed:
-
-```bash
-export RUGSHIELD_PROJECT_DIR=/path/to/OKX-RugShield
-```
-
 ## Reproducibility
 
 RugShield includes:
@@ -140,17 +164,6 @@ RugShield includes:
 - `scenarios/demo-scenarios.v1.json`
 - mock replay flows
 - live prototype entry points
-
-Suggested judging commands:
-
-```bash
-npm install
-npm run preflight
-npm run demo
-npm run replay:mock
-npm run simulate:guardian
-npm run benchmark:verbose
-```
 
 ## Output Boundaries
 
@@ -189,9 +202,9 @@ RugShield pushes onchain AI one step closer to a safety-native workflow:
 
 ## Roadmap
 
+- strengthen OpenClaw-native installation and invocation flow
 - add stricter executable benchmark validation
 - strengthen machine-readable report schemas
 - improve official OKX dependency detection
 - add screenshots, GIFs, and X demo links
-- improve live-mode operational guidance
 - extend the defense loop under explicit safety and authorization controls
