@@ -7,11 +7,11 @@ It summarizes the prompt design, target scenarios, and expected behavior of OKX 
 ## Claw and model context
 
 - Claw runtime: OpenClaw
+- Model version: GPT-5.4
 - Project structure: dual-skill workflow
 - Skills: `rugshield-scout`, `rugshield-guardian`
-- Model: configurable by the OpenClaw runtime used during testing or judging
 
-Because OpenClaw may run with different underlying models depending on environment, this repository focuses on publishing the workflow, prompt structure, and expected outputs rather than claiming one fixed model dependency inside the codebase.
+This repository publishes the workflow, prompt structure, and expected outputs so judges can understand how the system is intended to operate.
 
 ## Application scenarios
 
@@ -177,4 +177,4 @@ This repository currently publishes:
 It does not claim:
 - production-grade autonomous execution
 - full real-money defense automation
-- a fixed single-model dependency across all OpenClaw environments
+- any capability beyond the documented demo and prototype scope

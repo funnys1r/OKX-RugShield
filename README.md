@@ -4,11 +4,17 @@
 
 [![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-0f766e)](./package.json)
 [![OpenClaw Dual Skill](https://img.shields.io/badge/OpenClaw-dual%20skill-1d4ed8)](./SKILL.md)
+[![Model GPT-5.4](https://img.shields.io/badge/model-GPT--5.4-9333ea)](#)
 [![OKX Skills Based](https://img.shields.io/badge/OKX%20Skills-based-f59e0b)](./docs/AI_SETUP.md)
 [![Defense Workflow](https://img.shields.io/badge/focus-defense%20workflow-7c3aed)](./docs/GUARDIAN_PIPELINE.md)
 [![Demo + Live](https://img.shields.io/badge/mode-demo%20%7C%20live-2563eb)](./scripts/preflight.sh)
 
 Built on OKX Skills, packaged as an onchain **defense workflow**.
+
+## Demo runtime
+
+- Claw runtime: **OpenClaw**
+- Model version: **GPT-5.4**
 
 Quick links:
 
@@ -63,6 +69,7 @@ flowchart LR
 ### Reproducibility（可复制性）
 - Publishes local skills, prompt summaries, scenario definitions, benchmark flow, preflight checks, and OpenClaw usage docs
 - Supports demo mode even without a perfect live environment
+- Public demo context is disclosed: OpenClaw + GPT-5.4
 
 详细说明见：
 - [docs/JUDGING_INFO.md](./docs/JUDGING_INFO.md)

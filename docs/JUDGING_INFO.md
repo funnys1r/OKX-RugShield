@@ -6,6 +6,11 @@ This document is written to align with the OKX Onchain OS AI hackathon judging r
 
 OKX RugShield is a dual-skill defensive workflow built on top of OpenClaw and official OKX / OnchainOS skills.
 
+### Public demo context
+
+- Claw runtime: OpenClaw
+- Model version: GPT-5.4
+
 Instead of helping users chase the next trade, RugShield helps them:
 - detect rug-related risk
 - confirm real wallet exposure
@@ -82,6 +87,7 @@ The repository includes:
 - demo commands
 - live prototype commands
 - prompt and scenario summary
+- judging alignment notes
 
 ### Judge-friendly path
 
@@ -121,7 +127,7 @@ Strong because the project solves a real wallet defense problem with clear user 
 Strong because it reframes onchain AI around defense rather than pure trade opportunity discovery.
 
 ### Reproducibility
-Good and improving because prompt structure, commands, scenarios, and installation guidance are published.
+Good and improving because prompt structure, commands, scenarios, installation guidance, and runtime/model context are published.
 
 ## Contest materials checklist
 
