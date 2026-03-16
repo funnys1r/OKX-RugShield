@@ -10,7 +10,8 @@
     "start": "node cli/rugshield.js",
     "preflight": "node cli/rugshield.js",
     "demo": "node cli/rugshield.js --mock",
-    "test": "node cli/rugshield.js --mock",
+    "replay:mock": "node cli/replay-mock.js",
+    "test": "node cli/rugshield.js --mock && node cli/replay-mock.js",
     "install:core": "node scripts/installer.js --core-only",
     "install:dry": "node scripts/installer.js --core-only --dry-run"
   },

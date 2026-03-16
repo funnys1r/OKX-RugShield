@@ -27,14 +27,16 @@ OKX RugShield 由两个核心 Skill 组成：
 - 基于 OpenClaw 的双 Skill 结构：`rugshield-scout` + `rugshield-guardian`
 - 基于规则与流程定义的风险识别、暴露检查、退出策略与模拟响应框架
 - `npm run demo` 本地 mock 演示
+- `npm run replay:mock` 基于 mock 输入的事件回放入口
 - `mock/mock-rug-event.json` 演示输入样例
+- `lib/exit-strategy.js` 动态退出比例计算模块（原型）
 - 外部 OKX OnchainOS Skills 的安装与本地 Skill 注入流程
 
 ### 当前不包含或未完整实现
 - 完整实盘级自动执行程序
-- 基于真实池子深度的精细化退出比例计算代码
+- 基于真实链上实时池子数据的精细化退出比例计算
 - Mempool / Pending Transaction 抢先防御
-- 完整自动回放测试框架
+- 完整自动化巡检调度框架
 
 ## 3. 核心功能
 
@@ -56,6 +58,7 @@ OKX RugShield 由两个核心 Skill 组成：
 ### 3.3 Mock / Demo 能力
 项目提供：
 - `npm run demo`：本地 mock 演示
+- `npm run replay:mock`：读取 mock 事件并回放 Scout → Guardian 联动
 - `mock/mock-rug-event.json`：最小可用的模拟事件输入样例
 
 ## 4. 工作流程
@@ -97,7 +100,7 @@ node scripts/installer.js --core-only
 ```
 
 安装脚本会：
-- 安装 7 个必需的 OKX OnchainOS skills
+- 安装 7 个必需的 OKX OnchainOS Skills
 - 把 `rugshield-scout` 与 `rugshield-guardian` 复制到 `~/.openclaw/workspace/skills/`
 - 运行预检
 
@@ -129,7 +132,7 @@ npm run demo
 当 `AUTO_DEFENSE_MODE=true` 时，Guardian 可以在高危场景下自动处理。
 
 是否能够真正自动执行，取决于：
-- 当前 OpenClaw 环境是否已正确安装相关 OKX skills
+- 当前 OpenClaw 环境是否已正确安装相关 OKX Skills
 - 是否配置了执行权限
 - 是否具备真实链上调用能力
 
@@ -141,7 +144,15 @@ npm run demo
 npm run demo
 ```
 
-### 8.2 Mock 测试包
+### 8.2 Mock 回放
+
+```bash
+npm run replay:mock
+```
+
+该命令会读取 `mock/mock-rug-event.json`，并输出一次基于 mock 输入的 Scout → Guardian 联动回放。
+
+### 8.3 Mock 测试包
 
 仓库内提供：
 
@@ -159,12 +170,18 @@ npm run demo
 
 ```text
 OKX-RugShield/
-├── cli/rugshield.js
-├── scripts/installer.js
+├── cli/
+│   ├── replay-mock.js
+│   └── rugshield.js
+├── lib/
+│   └── exit-strategy.js
+├── scripts/
+│   └── installer.js
 ├── skills/
 │   ├── rugshield-scout/SKILL.md
 │   └── rugshield-guardian/SKILL.md
 ├── docs/
+│   ├── ACTIVE_DEFENSE.md
 │   ├── ARCHITECTURE.md
 │   ├── INTEGRATION_MATRIX.md
 │   ├── PRODUCTION_CHECKLIST.md
@@ -183,7 +200,7 @@ OKX-RugShield/
 当前版本的边界如下：
 
 - 项目的主形态是 OpenClaw Skill，不是独立量化交易系统
-- `npm run demo` 是 mock 演示，不是实盘执行
+- `npm run demo` 与 `npm run replay:mock` 都是 mock / 原型验证入口，不是实盘执行证明
 - `mock/mock-rug-event.json` 是演示输入样例，不是完整自动回放框架
 - Mempool 抢先防御、多钱包并发执行、更加精细的深度计算，当前主要属于增强方向
 
@@ -191,10 +208,11 @@ OKX-RugShield/
 
 后续增强方向包括：
 
-- 动态最优解退出：结合池子深度、滑点阈值与可回收率计算退出比例
+- 动态最优解退出：结合真实池子深度、滑点阈值与可回收率计算退出比例
 - Mempool / Pending Transaction 级提前响应
 - 多钱包并发路由模拟与并发执行
 - 更完整的 mock 回放与测试流
+- 与 AA 钱包 / 账户抽象执行策略层更深结合
 
 ## 12. 接手顺序
 
