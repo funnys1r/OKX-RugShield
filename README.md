@@ -111,6 +111,7 @@ See:
 - [docs/OPENCLAW_USAGE.md](./docs/OPENCLAW_USAGE.md)
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 - [docs/GUARDIAN_PIPELINE.md](./docs/GUARDIAN_PIPELINE.md)
+- [docs/INTENT_ROUTING.md](./docs/INTENT_ROUTING.md)
 
 ## Local developer / judge commands
 

@@ -74,6 +74,7 @@ Responsibilities:
 - diffing current scan vs previous scan
 - alerting only on new / worsening risk
 - serving as the proactive OpenClaw monitoring entry point
+- receiving casual user intent like “马上检查一次 / 按默认方案开 / 帮我盯着这个钱包” and mapping it to safe watcher defaults
 
 ## Main flow
 
