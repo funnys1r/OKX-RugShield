@@ -27,14 +27,7 @@ function printStatus(label, status) {
 }
 
 function runMockDemo() {
-  console.log(`
-      ____  _  ___  __  ____             _____ _     _      _     _ 
-     / __ \\| |/ / \\/ / |  _ \\ _   _  __ / /___| |__ (_) ___| | __| |
-    | |  | | ' / \\  /  | |_) | | | |/ _\0 \\___ \\ '_ \\| |/ _ \\ |/ _\0 |
-    | |__| | . \\ /  \\  |  _ <| |_| | (_| |___) | | | | |  __/ | (_| |
-     \\____/|_|\\_/_/\\_\\ |_| \\_\\__,_|\\__, |____/|_| |_|_|\\___|_|\\__,_|
-                                    |___/
-  `);
+  console.log('\n🛡️ OKX RugShield Mock Demo\n');
   logger('Initializing Mock Demo (Hackathon / Judge Mode)...');
   logger('No live credentials required. Using fully simulated threat intelligence and execution.', 'INFO');
 
